@@ -1,29 +1,36 @@
 """
 Affine layer of neural network
 
-@args: W, b, σ
+@args: w, b, σ
 
 """
-struct Affine{T1,T2,T3<:Function}
-    W::T1
+struct Affine{T1,T2}
+    w::T1
     b::T2
-    σ::T3
-end
+    σ::Function
 
-Affine(W, b) = Affine(W, b, identity) # @func identity returns its args
+    function Affine(
+        W::AbstractArray,
+        B::AbstractArray,
+        FUNC=identity::Function,
+    )
+        return new{typeof(W),typeof(B)}(W, B, FUNC)
+    end
 
-function Affine(
-    in::Integer,
-    out::Integer,
-    σ = identity::Function;
-    funcW = randn::Function,
-    funcB = randn::Function,
-    isBias = true::Bool,
-)
-    if isBias
-        return Affine(funcW(out, in), funcB(out), σ)
-    else
-        return Affine(funcW(out, in), Flux.Zeros(out), σ)
+    function Affine(
+        in::Integer,
+        out::Integer,
+        σ = identity::Function;
+        fw = randn::Function,
+        fb = randn::Function,
+        isBias = true::Bool,
+    )
+        if isBias
+            return Affine(fw(out, in), fb(out), σ)
+        else
+            return Affine(fw(out, in), Flux.Zeros(out), σ)
+        end
     end
 end
 
+(L::Affine)(x) = L.w * x .+ L.b
