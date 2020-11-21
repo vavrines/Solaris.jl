@@ -1,5 +1,5 @@
 # Solaris.jl
 
-A lightweight Julialang toolbox for fusing physical and neural models
+![CI](https://github.com/vavrines/Solaris.jl/workflows/CI/badge.svg)
 
-built upon Flux.jl and DiffEqFlux.jl
+A portable deep learning toolbox for fusing physical and neural models. It's built upon [Flux.jl](https://github.com/FluxML/Flux.jl) and [DiffEqFlux.jl](https://github.com/SciML/DiffEqFlux.jl).
