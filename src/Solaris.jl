@@ -1,11 +1,8 @@
 module Solaris
 
-using OrdinaryDiffEq
 using Flux
 using DiffEqFlux
 using Optim
-using FileIO
-using JLD2
 using Plots
 import Tracker
 
