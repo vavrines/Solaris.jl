@@ -1,14 +1,14 @@
-using Solaris
-using Solaris.Flux
-using Solaris.Flux.Losses: logitcrossentropy
-using Solaris.DiffEqFlux
-using Test
+using Flux
+using Flux.Losses: logitcrossentropy
+using DiffEqFlux
 
 m = Chain(
-    Affine(28^2, 128, relu),
-    Affine(128, 32, relu),
-    Affine(32, 10),
+    Solaris.Affine(28^2, 128, relu),
+    Solaris.Affine(128, 32, relu),
+    Solaris.Affine(32, 10),
 )
+
+m(randn(784))
 
 # regularization
 sqnorm(x) = sum(abs2, x)
