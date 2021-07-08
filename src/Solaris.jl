@@ -28,8 +28,5 @@ include("Layer/layer.jl")
 include("train.jl")
 
 const tf = PyNULL()
-function __init__()
-    #copy!(tf, pyimport("tensorflow"))
-end
 
 end

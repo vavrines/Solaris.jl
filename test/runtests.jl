@@ -12,8 +12,8 @@ function loss(x, y)
     xs = Flux.unstack(x, 3)
     ys = Flux.unstack(y, 3)
     ŷs = model.(xs)
-    l = 0f0
-    for t in 1:length(ŷs)
+    l = 0.0f0
+    for t = 1:length(ŷs)
         l += Flux.mse(ys[t], ŷs[t])
     end
     return l / length(ŷs)

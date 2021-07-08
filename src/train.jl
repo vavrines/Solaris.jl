@@ -21,7 +21,9 @@ function vis_train(
     ps = Flux.params(θ)
 
     if _data == DEFAULT_DATA && maxiters == typemax(Int)
-        error("A data iterator must be provided or the `maxiters` keyword argument must be set.")
+        error(
+            "A data iterator must be provided or the `maxiters` keyword argument must be set.",
+        )
     elseif _data == DEFAULT_DATA && maxiters != typemax(Int)
         data = Iterators.repeated((), maxiters)
     elseif maxiters != typemax(Int)
@@ -32,12 +34,12 @@ function vis_train(
 
     t0 = time()
 
-    local x, min_err
+    local x , min_err
     min_err = typemax(eltype(θ)) # dummy variables
     min_opt = 1
 
     anim = @animate for (i, d) in enumerate(data) # Iterator that yields (i, d) where i is a counter starting at 1, 
-                                                  # and d is the d-th value from dataset 
+        # and d is the d-th value from dataset 
         # calculate gradients of loss function
         # gradient() requires two args: f and params                                       
         gs = Flux.Zygote.gradient(ps) do
@@ -46,7 +48,9 @@ function vis_train(
         end
         cb_call = cb(θ, x...)
         if !(typeof(cb_call) <: Bool)
-            error("The callback function should return a boolean to decide whether stopping the optimization process.")
+            error(
+                "The callback function should return a boolean to decide whether stopping the optimization process.",
+            )
         elseif cb_call # stop
             break
         end

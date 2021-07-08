@@ -9,7 +9,7 @@ using Solaris.Flux, Solaris.DiffEqFlux
 gradient: scalar -> scalar
 """
 gradient(x -> 3x^2 + 2x + 1, 5) # (32, )
-gradient((a, b) -> a*b, 2, 3) # (3, 2)
+gradient((a, b) -> a * b, 2, 3) # (3, 2)
 
 """
 gradient: scalar -> vector
@@ -18,7 +18,7 @@ gradient: scalar -> vector
     ∂f/∂x₁ = 2x₁ - 2y₁
     ⋯
 """
-f(x, y) = sum((x .- y).^2)
+f(x, y) = sum((x .- y) .^ 2)
 gradient(f, [2, 1], [2, 0])
 
 """
@@ -41,7 +41,7 @@ b = rand(2)
 predict(x) = W * x .+ b
 function loss(x, y)
     ŷ = predict(x)
-    sum((y .- ŷ).^2)
+    sum((y .- ŷ) .^ 2)
 end
 
 X, Y = rand(5), rand(2)
