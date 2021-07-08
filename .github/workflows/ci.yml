@@ -27,11 +27,12 @@ jobs:
 #          - 'nightly'
         os:
           - ubuntu-latest
-#          - macOS-latest
+          - macOS-latest
 #          - windows-latest
         arch:
           - x64
     steps:
+      - run: pip3 install tensorflow --user
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
         with:

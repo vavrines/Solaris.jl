@@ -20,7 +20,7 @@ Y = X.^2
 data = Flux.Data.DataLoader((X, Y), batchsize = 4, shuffle = true)
 
 m = Solaris.ICNN(4, 4, [10, 10, 10, 10], tanh)
-ps = params(m)
+ps = Flux.params(m)
 loss(x, y) = sum(abs2, m(x) .- y) / 100
 cb = () -> println("loss: $(loss(X, Y))")
 
