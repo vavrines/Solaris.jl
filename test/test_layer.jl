@@ -1,4 +1,3 @@
-using Flux
 using Flux.Losses: logitcrossentropy
 using DiffEqFlux
 
@@ -18,7 +17,7 @@ loss(rand(Float32, 28^2), rand(Float32, 10))
 
 X = rand(Float32, 4, 100)
 Y = X.^2
-data = Flux.Data.DataLoader(X, Y, batchsize = 4, shuffle = true)
+data = Flux.Data.DataLoader((X, Y), batchsize = 4, shuffle = true)
 
 m = Solaris.ICNN(4, 4, [10, 10, 10, 10], tanh)
 ps = params(m)

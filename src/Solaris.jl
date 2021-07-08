@@ -1,19 +1,35 @@
 module Solaris
 
-using Flux
+using CSV
+using CUDA: CuArray
+using DataFrames
 using DiffEqFlux
+using Flux
 using Optim
 using Plots
+using PyCall
+import BSON
+import JLD2
 import Tracker
 
 export device
-export track, untrack, tracker_mode, zygote_mode
-export Affine
+export AbstractLayer,
+       AbstractChain,
+       Shortcut,
+       Convex,
+       ICNN,
+       FastConvex,
+       FastICNN
 export vis_train
 
 include("widget.jl")
-include("tracker.jl")
-include("layer.jl")
+include("io.jl")
+include("Layer/layer.jl")
 include("train.jl")
 
-end # module
+const tf = PyNULL()
+function __init__()
+    #copy!(tf, pyimport("tensorflow"))
+end
+
+end
