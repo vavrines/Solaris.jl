@@ -1,16 +1,35 @@
 using Flux.Losses: logitcrossentropy
-using DiffEqFlux
 
 # affine
-Affine(2, 1; isBias = true)
-m = Affine(2, 1; isBias = false)
+Solaris.Affine(2, 1; isBias = true)
+m = Solaris.Affine(2, 1; isBias = false)
 m(randn(Float32, 2))
 
+Chain(4, 4, tanh)
+Solaris.dense_layer(4, 4; isBias = true)
+Solaris.dense_layer(4, 4; isBias = false)
+
+faf = Solaris.FastAffine(4, 4, tanh)
+DiffEqFlux.paramlength(faf)
+_p = initial_params(faf)
+faf(randn(Float32, 4), _p)
+
+nn = Chain(Dense(21, 21, tanh), Dense(21, 21))
+sm = Shortcut(nn)
+show(sm)
+sm(rand(21))
+
 # icnn
-X = rand(Float32, 4, 10)
-Y = X .^ 2
-data = Flux.Data.DataLoader((X, Y), batchsize = 4, shuffle = true)
-m = Solaris.ICNN(4, 4, [10, 10, 10, 10], tanh)
+icnnl = Convex(4, 4, 1, identity; fw = randn, fb = zeros, precision = Float32)
+icnnc = ICNN(4, 1, [10, 10], identity; fw = randn, fb = zeros, precision = Float32)
+show(icnnl)
+show(icnnc)
+icnnl(randn(4))
+icnnl(randn(4), randn(4))
+icnnc(randn(4))
 
 # fast icnn
-fm = Solaris.FastICNN(4, 4, [10, 10, 10, 10], tanh)
+fil = FastConvex(4, 4, 4)
+fic = FastICNN(4, 1, [10, 10])
+fil(rand(4), rand(4), initial_params(fil))
+fic(rand(4), initial_params(fic))
