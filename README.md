@@ -1,5 +1,3 @@
-# Solaris.jl
-
 <div align="center">
   <h1>Solaris.jl</h1>
   <img
