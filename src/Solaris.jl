@@ -4,6 +4,7 @@ using CSV
 using CUDA: CuArray
 using DataFrames
 using DiffEqFlux
+using DiffEqFlux.GalacticOptim
 using Flux
 using Optim
 using Plots
@@ -20,7 +21,9 @@ export AbstractLayer,
        ICNN,
        FastConvex,
        FastICNN
-export vis_train
+export sci_train,
+       sci_train!,
+       vis_train
 
 include("widget.jl")
 include("io.jl")

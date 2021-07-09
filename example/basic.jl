@@ -1,6 +1,4 @@
-"""
-Illustrative examples from Flux.jl
-"""
+# Illustrative examples from Flux.jl
 
 using Solaris
 using Solaris.Flux, Solaris.DiffEqFlux
@@ -53,3 +51,18 @@ W .-= 0.1 .* W̄
 L1 = loss(X, Y)
 
 @assert L1 < L0
+
+"""
+affine chain
+"""
+m = Chain(
+    Solaris.Affine(28^2, 128, relu),
+    Solaris.Affine(128, 32, relu),
+    Solaris.Affine(32, 10),
+)
+
+# regularization
+sqnorm(x) = sum(abs2, x)
+loss(x, y) = logitcrossentropy(m(x), y) + sum(sqnorm, Flux.params(m))
+
+loss(rand(Float32, 28^2), rand(Float32, 10))
