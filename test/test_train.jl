@@ -14,9 +14,3 @@ sci_train(loss, p1)
 cd(@__DIR__)
 model = load_model("model.h5"; mode = :tf)
 sci_train!(model, (randn(Float32, 1, 4), randn(Float32, 1, 1)))
-
-cb = function(args...)
-    plot(randn(2))
-    return false
-end
-vis_train(loss, p1, ADAM(); cb = cb, maxiters = 1)
