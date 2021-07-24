@@ -24,6 +24,9 @@ device(a)
     Solaris.tracker_mode()
     Flux.train!(loss, ps, data, opt, cb = cb)
 
+    ps1 = Flux.params(model)
+    Flux.train!(loss, ps1, data, opt, cb = cb)
+
     model |> Solaris.untrack
     Solaris.zygote_mode()
 end

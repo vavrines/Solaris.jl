@@ -18,15 +18,15 @@
 
 Scientific machine learning training function
 
-- @args ann: neural network model
-- @args data: tuple (X, Y) of dataset
-- @args θ: parameters of neural network
-- @args opt: optimizer
-- @args adtype: automatical differentiation type
-- @args args: rest arguments
-- @args device: cpu / gpu
-- @args maxiters: maximal iteration number
-- @args kwargs: keyword arguments
+- @arg ann: neural network model
+- @arg data: tuple (X, Y) of dataset
+- @arg θ: parameters of neural network
+- @arg opt: optimizer
+- @arg adtype: automatical differentiation type
+- @arg args: rest arguments
+- @arg device: cpu / gpu
+- @arg maxiters: maximal iteration number
+- @arg kwargs: keyword arguments
 
 """
 function sci_train(
@@ -71,12 +71,12 @@ end
 
 Scientific machine learning training function
 
-- @args ann: neural network model
-- @args data: tuple (X, Y) of dataset
-- @args opt: optimizer 
-- @args epoch: epoch number
-- @args batch: batch size
-- @args device: cpu / gpu
+- @arg ann: neural network model
+- @arg data: tuple (X, Y) of dataset
+- @arg opt: optimizer 
+- @arg epoch: epoch number
+- @arg batch: batch size
+- @arg device: cpu / gpu
 
 """
 function sci_train!(ann, data::Tuple, opt = ADAM(); device = cpu, epoch = 1, batch = 1)
