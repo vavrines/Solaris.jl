@@ -135,8 +135,7 @@ function vis_train(
     opt,
     _data = DEFAULT_DATA;
     cb = (args...) -> false,
-    maxiters = get_maxiters(data),
-    progress = true,
+    maxiters = 100,
     save_best = true,
 )
     θ = copy(_θ)
@@ -177,7 +176,8 @@ function vis_train(
             break
         end
 
-        DiffEqFlux.update!(opt, ps, gs)
+        #DiffEqFlux.update!(opt, ps, gs)
+        Flux.Optimise.update!(opt, ps, gs)
         if save_best
             if first(x) < first(min_err) # we've found a better solution
                 min_opt = opt
@@ -192,35 +192,5 @@ function vis_train(
 
     t1 = time()
 
-    res = Optim.MultivariateOptimizationResults(
-        opt,
-        _θ, # initial_x,
-        θ, # pick_best_x(f_incr_pick, state),
-        first(x), # pick_best_f(f_incr_pick, state, d),
-        maxiters, # iteration,
-        maxiters >= maxiters, # iteration == options.iterations,
-        false, # x_converged,
-        0.0, # T(options.x_tol),
-        0.0, # T(options.x_tol),
-        NaN, # x_abschange(state),
-        NaN, # x_abschange(state),
-        false, # f_converged,
-        0.0, # T(options.f_tol),
-        0.0, # T(options.f_tol),
-        NaN, # f_abschange(d, state),
-        NaN, # f_abschange(d, state),
-        false, # g_converged,
-        0.0, # T(options.g_tol),
-        NaN, # g_residual(d),
-        false, # f_increased,
-        nothing,
-        maxiters,
-        maxiters,
-        0,
-        true,
-        NaN,
-        t1 - t0,
-    )
-
-    return res, anim
+    return anim
 end

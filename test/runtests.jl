@@ -1,4 +1,4 @@
-using Solaris, Test, Flux, DiffEqFlux
+using Solaris, Test, Flux, DiffEqFlux, Optim, Plots
 
 include("test_io.jl")
 include("test_layer.jl")
