@@ -1,13 +1,3 @@
-"""
-    device(x)
-
-Adapt data to computing architecture
-
-"""
-device(x) = gpu(x)
-
-device(x::CuArray) = cpu(x)
-
 # ============================================================
 # Tracker Methods (see TrackerFlux.jl for details)
 # ============================================================

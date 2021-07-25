@@ -1,6 +1,3 @@
-a = device(rand(2))
-device(a)
-
 @testset "Widget" begin
     x = randn(Float32, 10, 2)
     y = rand(Float32, 1, 2)
