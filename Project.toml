@@ -19,7 +19,7 @@ Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
 
 [compat]
 BSON = "0.3"
-CSV = "0.8"
+CSV = "0.8, 0.9"
 CUDA = "^3"
 DataFrames = "^1"
 DiffEqFlux = "^1"
