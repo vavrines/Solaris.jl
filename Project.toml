@@ -1,7 +1,7 @@
 name = "Solaris"
 uuid = "c31bc6c7-79d6-424e-a85f-5b42ee086500"
 authors = ["Tianbai Xiao <tianbaixiao@gmail.com>"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
