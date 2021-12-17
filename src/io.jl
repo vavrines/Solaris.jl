@@ -25,8 +25,6 @@ Load the trained machine learning model
 function load_model(file::T; kwargs...) where {T<:AbstractString}
     if file[end-3:end] == "jld2"
         nn = load_model(file, :jld)
-    elseif file[end-3:end] == "bson"
-        nn = load_model(file, :bson)
     else
         nn = load_model(file, :tf)
     end
@@ -37,8 +35,6 @@ end
 function load_model(file::T, mode) where {T<:AbstractString}
     if mode == :jld
         JLD2.@load file nn
-    elseif mode == :bson
-        BSON.@load file nn
     elseif mode == :tf
         copy!(tf, pyimport("tensorflow"))
         nn = tf.keras.models.load_model(file)
@@ -55,8 +51,6 @@ Save the trained machine learning model
 function save_model(nn; mode = :jld)
     if mode == :jld
         JLD2.@save "model.jld2" nn
-    elseif mode == :bson
-        BSON.@save "model.bson" nn
     end
 end
 

@@ -6,11 +6,10 @@ using DataFrames
 using DiffEqFlux
 using DiffEqFlux.GalacticOptim
 using Flux
+using JLD2
 using Optim
 using Plots
 using PyCall
-import BSON
-import JLD2
 import Tracker
 
 export device

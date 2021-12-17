@@ -1,8 +1,8 @@
 """
-    struct Affine{T1<:AbstractArray,T2}
-        w::T1
-        b::T2
-        σ::Function
+    struct Affine
+        w
+        b
+        σ
     end
 
 Affine layer of neural network
