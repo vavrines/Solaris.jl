@@ -28,6 +28,7 @@ function sci_train(
     maxiters = 200::Integer,
     kwargs...,
 ) where {T<:DiffEqFlux.FastLayer}
+
     data = data |> device
     θ = θ |> device
     L = size(data[1], 2)
@@ -38,22 +39,23 @@ function sci_train(
         return false
     end
 
-    f = GalacticOptim.OptimizationFunction((x, p) -> loss(x), adtype)
-    fi = GalacticOptim.instantiate_function(f, θ, adtype, nothing)
-    prob = GalacticOptim.OptimizationProblem(fi, θ; kwargs...)
+    return sci_train(
+        loss,
+        θ,
+        opt,
+        adtype,
+        args...;
+        cb = Flux.throttle(cb, 1),
+        maxiters = maxiters,
+        kwargs...,
+    )
 
-    return GalacticOptim.solve(prob, opt, args...; cb = Flux.throttle(cb, 1), maxiters = maxiters, kwargs...)
 end
 
 """
 $(SIGNATURES)
 """
-function sci_train(loss::Function, θ, opt = ADAM(), adtype = GalacticOptim.AutoZygote(), args...; maxiters = 200::Integer, kwargs...)
-    f = GalacticOptim.OptimizationFunction((x, p) -> loss(x), adtype)
-    fi = GalacticOptim.instantiate_function(f, θ, adtype, nothing)
-    prob = GalacticOptim.OptimizationProblem(fi, θ; kwargs...)
-    return GalacticOptim.solve(prob, opt, args...; maxiters = maxiters, kwargs...)
-end
+sci_train(args...; kwargs...) = DiffEqFlux.sciml_train(args...; kwargs...)
 
 
 """
@@ -106,9 +108,24 @@ $(SIGNATURES)
 
 Trainer for Tensorflow model
 """
-function sci_train!(ann::PyObject, data::Tuple; device = cpu, split = 0.0, epoch = 1, batch = 64, verbose = 1)
+function sci_train!(
+    ann::PyObject,
+    data::Tuple;
+    device = cpu,
+    split = 0.0,
+    epoch = 1,
+    batch = 64,
+    verbose = 1,
+)
     X, Y = data
-    ann.fit(X, Y, validation_split=split, epochs=epoch, batch_size=batch, verbose=verbose)
+    ann.fit(
+        X,
+        Y,
+        validation_split = split,
+        epochs = epoch,
+        batch_size = batch,
+        verbose = verbose,
+    )
 
     return nothing
 end

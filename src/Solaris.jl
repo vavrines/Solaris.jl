@@ -14,16 +14,8 @@ using PyCall
 import Tracker
 
 export device
-export AbstractLayer,
-       AbstractChain,
-       Shortcut,
-       Convex,
-       ICNN,
-       FastConvex,
-       FastICNN
-export sci_train,
-       sci_train!,
-       vis_train
+export AbstractLayer, AbstractChain, Shortcut, Convex, ICNN, FastConvex, FastICNN
+export sci_train, sci_train!, vis_train
 
 include("widget.jl")
 include("io.jl")
