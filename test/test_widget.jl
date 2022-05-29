@@ -1,4 +1,4 @@
-@testset "Widget" begin
+#=@testset "Widget" begin
     x = randn(Float32, 10, 2)
     y = rand(Float32, 1, 2)
 
@@ -27,3 +27,4 @@
     model |> Solaris.untrack
     Solaris.zygote_mode()
 end
+=#
