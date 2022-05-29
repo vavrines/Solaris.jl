@@ -5,6 +5,7 @@ using CUDA: CuArray
 using DataFrames
 using DiffEqFlux
 using DiffEqFlux.GalacticOptim
+using DocStringExtensions
 using Flux
 using JLD2
 using Optim
