@@ -1,10 +1,5 @@
 """
-    struct Convex{T1<:AbstractArray,T2<:Union{Flux.Zeros, AbstractVector},T3}
-        W::T1
-        U::T1
-        b::T2
-        σ::T3
-    end
+$(TYPEDEF)
     
 Input Convex Neural Network (ICNN) layer by Amos et al.
 """
@@ -136,13 +131,7 @@ end
 
 
 """
-    struct FastConvex{I<:Integer,F1,F2} <: DiffEqFlux.FastLayer
-        zin::I
-        xin::I
-        out::I
-        σ::F1
-        initial_params::F2
-    end
+$(TYPEDEF)
     
 Fast ICNN layer
 """

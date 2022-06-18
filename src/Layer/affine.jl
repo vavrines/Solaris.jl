@@ -1,9 +1,5 @@
 """
-    struct Affine
-        w
-        b
-        σ
-    end
+$(TYPEDEF)
 
 Affine layer of neural network
 
@@ -36,12 +32,8 @@ Flux.@functor Affine # works with Flux.params
 
 
 """
-    struct FastAffine{I,F,F2} <: DiffEqFlux.FastLayer
-        out::I
-        in::I
-        σ::F
-        initial_params::F2
-    end
+$(TYPEDEF)
+
 Equivalent FastDense layer with controllable type
 """
 struct FastAffine{I,F,F2} <: DiffEqFlux.FastLayer

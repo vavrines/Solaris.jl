@@ -1,9 +1,6 @@
 """
-    struct Shortcut{T}
-        chain::T
-        f::Function
-        σ::Function
-    end
+$(TYPEDEF)
+
 Shortcut connection for ResNet-type blocks
 """
 struct Shortcut{T}

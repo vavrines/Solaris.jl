@@ -5,7 +5,7 @@
 export load_data, load_model, save_model
 
 """
-    load_data(file; mode = :csv, dlm = " ")
+$(SIGNATURES)
 
 Load dataset from file
 """
@@ -17,8 +17,9 @@ function load_data(file; mode = :csv, dlm = nothing)
     return dataset
 end
 
+
 """
-    load_model(file; mode = :jld)
+$(SIGNATURES)
 
 Load the trained machine learning model
 """
@@ -32,6 +33,9 @@ function load_model(file::T; kwargs...) where {T<:AbstractString}
     return nn
 end
 
+"""
+$(SIGNATURES)
+"""
 function load_model(file::T, mode) where {T<:AbstractString}
     if mode == :jld
         JLD2.@load file nn
@@ -43,8 +47,9 @@ function load_model(file::T, mode) where {T<:AbstractString}
     return nn
 end
 
+
 """
-    save_model(nn; mode = :jld)
+$(SIGNATURES)
 
 Save the trained machine learning model
 """
@@ -54,6 +59,9 @@ function save_model(nn; mode = :jld)
     end
 end
 
+"""
+$(SIGNATURES)
+"""
 function save_model(nn::PyObject)
     nn.save("model.h5")
 end

@@ -4,7 +4,9 @@ using CSV
 using CUDA: CuArray
 using DataFrames
 using DiffEqFlux
-using DiffEqFlux.GalacticOptim
+using DiffEqFlux.ForwardDiff
+using DiffEqFlux.Optimization
+using DiffEqFlux.Zygote
 using DocStringExtensions
 using Flux
 using JLD2

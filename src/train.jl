@@ -22,7 +22,7 @@ function sci_train(
     data,
     θ = initial_params(ann),
     opt = ADAM(),
-    adtype = GalacticOptim.AutoZygote(),
+    adtype = Optimization.AutoZygote(),
     args...;
     device = cpu,
     maxiters = 200::Integer,
@@ -54,8 +54,69 @@ end
 
 """
 $(SIGNATURES)
-"""
+
 sci_train(args...; kwargs...) = DiffEqFlux.sciml_train(args...; kwargs...)
+"""
+function sci_train(
+    loss,
+    θ,
+    opt = DiffEqFlux.OptimizationPolyalgorithms.PolyOpt(),
+    adtype = nothing,
+    args...;
+    lower_bounds = nothing,
+    upper_bounds = nothing,
+    cb = nothing,
+    callback = (args...) -> (false),
+    maxiters = nothing,
+    kwargs...,
+)
+
+    if adtype === nothing
+        if length(θ) < 50
+            fdtime = try
+                ForwardDiff.gradient(x -> first(loss(x)), θ)
+                @elapsed ForwardDiff.gradient(x -> first(loss(x)), θ)
+            catch
+                Inf
+            end
+            zytime = try
+                Zygote.gradient(x -> first(loss(x)), θ)
+                @elapsed Zygote.gradient(x -> first(loss(x)), θ)
+            catch
+                Inf
+            end
+
+            if fdtime == zytime == Inf
+                @warn "AD methods failed, using numerical differentiation. To debug, try ForwardDiff.gradient(loss, θ) or Zygote.gradient(loss, θ)"
+                adtype = Optimization.AutoFiniteDiff()
+            elseif fdtime < zytime
+                adtype = Optimization.AutoForwardDiff()
+            else
+                adtype = Optimization.AutoZygote()
+            end
+
+        else
+            adtype = Optimization.AutoZygote()
+        end
+    end
+    if !isnothing(cb)
+        callback = cb
+    end
+
+    optf = Optimization.OptimizationFunction((x, p) -> loss(x), adtype)
+    optprob = Optimization.OptimizationProblem(
+        optf,
+        θ;
+        lb = lower_bounds,
+        ub = upper_bounds,
+        kwargs...,
+    )
+    if maxiters !== nothing
+        Optimization.solve(optprob, opt, args...; maxiters, callback = callback, kwargs...)
+    else
+        Optimization.solve(optprob, opt, args...; callback = callback, kwargs...)
+    end
+end
 
 
 """

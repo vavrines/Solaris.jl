@@ -10,16 +10,10 @@ function Flux.Chain(D::Integer, N::Integer, σ::Function)
     return Chain(t...)
 end
 
+
 """
-    dense_layer(
-        in::T,
-        out::T,
-        σ = identity::Function;
-        fw = randn::Function,
-        fb = zeros::Function,
-        isBias = true::Bool,
-        precision = Float32,
-    ) where {T<:Integer}
+$(SIGNATURES)
+
 Create dense layer with meticulous settings
 """
 function dense_layer(
