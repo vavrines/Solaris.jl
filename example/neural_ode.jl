@@ -35,24 +35,15 @@ callback = function (p, l, pred; doplot = false)
     return false
 end
 
-sci_train(loss_neuralode, p, ADAM(0.05), callback = callback, maxiters = 300)
+sci_train(loss_neuralode, p, ADAM(0.05), Optimization.AutoZygote(); callback = callback, maxiters = 300)
 
+res = sci_train(loss_neuralode, Lux.ComponentArray(p), ADAM(0.05), Optimization.AutoZygote(); callback = callback, maxiters = 300)
+res = sci_train(loss_neuralode, res.u, LBFGS(), Optimization.AutoZygote(); callback = callback, maxiters = 300)
 
+sol = prob_neuralode(u0, p, st)
+sol[1]
 
-# use Optimization.jl to solve the problem
-adtype = Optimization.AutoZygote()
+sol = prob_neuralode(u0, res.u, st)
+nde_data = sol[1] |> Array
 
-optf = Optimization.OptimizationFunction((x, p) -> loss_neuralode(x), adtype)
-optprob = Optimization.OptimizationProblem(optf, Lux.ComponentArray(p))
-
-result_neuralode =
-    Optimization.solve(optprob, ADAM(0.05), callback = callback, maxiters = 300)
-
-optprob2 = remake(optprob, u0 = result_neuralode.u)
-
-result_neuralode2 = Optimization.solve(
-    optprob2,
-    LBFGS(),
-    callback = callback,
-    allow_f_increases = false,
-)
+nde_data .- ode_data
