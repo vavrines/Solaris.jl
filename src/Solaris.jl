@@ -4,14 +4,14 @@ using CSV
 using CUDA: CuArray
 using DataFrames
 using DiffEqFlux
-using DiffEqFlux.ForwardDiff
-using DiffEqFlux.Optimization
+using ForwardDiff
 using DiffEqFlux.Zygote
 using DocStringExtensions
 using Flux
 using JLD2
+using Lux
 using Optim
-using Plots
+using Optimization
 using PyCall
 import Tracker
 
