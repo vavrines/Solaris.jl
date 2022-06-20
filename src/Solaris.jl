@@ -5,14 +5,14 @@ using CUDA: CuArray
 using DataFrames
 using DiffEqFlux
 using ForwardDiff
-using DiffEqFlux.Zygote
 using DocStringExtensions
 using Flux
 using JLD2
-using Lux
 using Optim
 using Optimization
 using PyCall
+using Zygote
+import Lux
 import Tracker
 
 export device
