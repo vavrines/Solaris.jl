@@ -1,8 +1,9 @@
-using Lux, OrdinaryDiffEq, Flux, Optimization, Optim, Random
+using Lux, OrdinaryDiffEq, Flux, Optimization, Optim, Random, Plots
 using DiffEqFlux: NeuralODE
 using Solaris: sci_train
 
 rng = Random.default_rng()
+Random.seed!(rng, 0)
 
 u0 = Float32[2.0; 0.0]
 datasize = 30
@@ -19,31 +20,36 @@ ode_data = Array(solve(prob_trueode, Tsit5(), saveat = tsteps))
 
 nn = Lux.Chain(ActivationFunction(x -> x .^ 3), Lux.Dense(2, 50, tanh), Lux.Dense(50, 2))
 p, st = Lux.setup(rng, nn)
+p1 = Lux.ComponentArray(p)
 
-prob_neuralode = NeuralODE(nn, tspan, Tsit5(), saveat = tsteps)
+#prob_neuralode = NeuralODE(nn, tspan, Tsit5(), saveat = tsteps)
+#predict_neuralode(p) = Array(prob_neuralode(u0, p, st)[1])
+dudt(x, p, t) = nn(x, p, st) |> first
+prob_node = ODEProblem(dudt, u0, tspan, p1)
 
-predict_neuralode(p) = Array(prob_neuralode(u0, p, st)[1])
-
-function loss_neuralode(p)
-    pred = predict_neuralode(p)
+function loss(p)
+    pred = solve(prob_node, Midpoint(), u0 = u0, p = p, saveat = tsteps) |> Array
+    #pred = predict_neuralode(p)
     loss = sum(abs2, ode_data .- pred)
-    return loss, pred
+    
+    return loss
 end
 
-callback = function (p, l, pred; doplot = false)
+cb = function (p, l)
     display(l)
     return false
 end
 
-sci_train(loss_neuralode, p, ADAM(0.05), Optimization.AutoZygote(); callback = callback, maxiters = 300)
+res = sci_train(loss, p, ADAM(0.05), Optimization.AutoZygote(); callback = cb, maxiters = 300)
+res = sci_train(loss, res.u, LBFGS(), Optimization.AutoZygote(); callback = cb, maxiters = 300)
 
-res = sci_train(loss_neuralode, Lux.ComponentArray(p), ADAM(0.05), Optimization.AutoZygote(); callback = callback, maxiters = 300)
-res = sci_train(loss_neuralode, res.u, LBFGS(), Optimization.AutoZygote(); callback = callback, maxiters = 300)
-
-sol = prob_neuralode(u0, p, st)
-sol[1]
-
-sol = prob_neuralode(u0, res.u, st)
-nde_data = sol[1] |> Array
+#sol = prob_neuralode(u0, res.u, st)
+sol = solve(prob_node, Midpoint(), u0 = u0, p = res.u, saveat = tsteps)
+nde_data = sol |> Array
 
 nde_data .- ode_data
+
+plot(ode_data[1, :])
+plot!(ode_data[2, :])
+plot!(nde_data[1, :], line = :dash)
+plot!(nde_data[2, :], line = :dash)
