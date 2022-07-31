@@ -135,7 +135,7 @@ $(TYPEDEF)
     
 Fast ICNN layer
 """
-struct FastConvex{I<:Integer,F1,F2} <: DiffEqFlux.FastLayer
+struct FastConvex{I<:Integer,F1,F2} <: AbstractExplicitLayer
     zin::I
     xin::I
     out::I
@@ -173,8 +173,12 @@ end
 
 DiffEqFlux.paramlength(f::FastConvex) = f.out * (f.zin + f.xin + 1)
 DiffEqFlux.initial_params(f::FastConvex) = f.initial_params()
+param_length(f::FastConvex) = f.out * (f.zin + f.xin + 1)
+param_length(f::DiffEqFlux.FastDense) = f.out*(f.in+f.bias)
+init_params(f::FastConvex) = f.initial_params()
+init_params(f::DiffEqFlux.FastDense) = f.initial_params()
 
-struct FastICNN{T} <: DiffEqFlux.FastLayer
+struct FastICNN{T} <: AbstractExplicitChain
     layers::T
 end
 
@@ -227,12 +231,23 @@ end
 
 DiffEqFlux.initial_params(c::FastICNN) = vcat(initial_params.(c.layers)...)
 
-function (m::FastICNN)(x::AbstractArray, p)
+#=function (m::FastICNN)(x::AbstractArray, p)
     z = m.layers[1](x, p[1:DiffEqFlux.paramlength(m.layers[1])])
     counter = DiffEqFlux.paramlength(m.layers[1])
     for i = 2:length(m.layers)
         z = m.layers[i](z, x, p[counter+1:counter+DiffEqFlux.paramlength(m.layers[i])])
         counter += DiffEqFlux.paramlength(m.layers[i])
+    end
+
+    return z
+end=#
+
+function (m::FastICNN)(x::AbstractArray, p)
+    z = m.layers[1](x, p[1:param_length(m.layers[1])])
+    counter = param_length(m.layers[1])
+    for i = 2:length(m.layers)
+        z = m.layers[i](z, x, p[counter+1:counter+param_length(m.layers[i])])
+        counter += param_length(m.layers[i])
     end
 
     return z
