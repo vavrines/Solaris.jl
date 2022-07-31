@@ -5,21 +5,22 @@
 """
 $(SIGNATURES)
 
-Scientific machine learning training function
+Scientific machine learning trainer
 
-- @arg ann: neural network model
-- @arg data: tuple (X, Y) of dataset
-- @arg θ: parameters of neural network
-- @arg opt: optimizer
-- @arg adtype: automatical differentiation type
-- @arg args: rest arguments
-- @arg device: cpu / gpu
-- @arg maxiters: maximal iteration number
-- @arg kwargs: keyword arguments
+# Arguments
+- ``ann``: neural network model
+- ``data``: dataset
+- ``θ``: parameters of neural network
+- ``opt``: optimizer
+- ``adtype``: automatical differentiation type
+- ``args``: rest arguments
+- ``device``: cpu / gpu
+- ``maxiters``: maximal iteration number
+- ``kwargs``: keyword arguments
 """
 function sci_train(
-    ann::T,
-    data,
+    ann,
+    data::Union{Flux.Data.DataLoader,Tuple},
     θ = initial_params(ann),
     opt = ADAM(),
     adtype = Optimization.AutoZygote(),
@@ -27,7 +28,7 @@ function sci_train(
     device = cpu,
     maxiters = 200::Integer,
     kwargs...,
-) where {T<:DiffEqFlux.FastLayer}
+)
 
     data = data |> device
     θ = θ |> device
@@ -54,13 +55,11 @@ end
 
 """
 $(SIGNATURES)
-
-sci_train(args...; kwargs...) = DiffEqFlux.sciml_train(args...; kwargs...)
 """
 function sci_train(
     loss,
     θ,
-    opt = DiffEqFlux.OptimizationPolyalgorithms.PolyOpt(),
+    opt = OptimizationPolyalgorithms.PolyOpt(),
     adtype = nothing,
     args...;
     lower_bounds = nothing,
@@ -123,14 +122,15 @@ sci_train(loss, p::NamedTuple, args...; kwargs...) = sci_train(loss, Lux.Compone
 """
 $(SIGNATURES)
 
-Scientific machine learning training function
+Scientific machine learning trainer
 
-- @arg ann: neural network model
-- @arg data: tuple (X, Y) of dataset
-- @arg opt: optimizer 
-- @arg epoch: epoch number
-- @arg batch: batch size
-- @arg device: cpu / gpu
+# Arguments
+- ``ann``: neural network model
+- ``data``: tuple (X, Y) of dataset
+- ``opt``: optimizer 
+- ``epoch``: epoch number
+- ``batch``: batch size
+- ``device``: cpu / gpu
 """
 function sci_train!(ann, data::Tuple, opt = ADAM(); device = cpu, epoch = 1, batch = 1)
     X, Y = data |> device
