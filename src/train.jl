@@ -22,7 +22,7 @@ function sci_train(
     ann,
     data::Union{Flux.Data.DataLoader,Tuple},
     θ = init_params(ann),
-    opt = ADAM(),
+    opt = Adam(),
     adtype = Optimization.AutoZygote(),
     args...;
     device = cpu,
@@ -57,7 +57,7 @@ function sci_train(
     ann::Lux.AbstractExplicitLayer,
     data::Union{Flux.Data.DataLoader,Tuple},
     ps = setup(ann),
-    opt = ADAM(),
+    opt = Adam(),
     adtype = Optimization.AutoZygote(),
     args...;
     device = cpu,
@@ -169,7 +169,7 @@ Scientific machine learning trainer
 - ``batch``: batch size
 - ``device``: cpu / gpu
 """
-function sci_train!(ann, data::Tuple, opt = ADAM(); device = cpu, epoch = 1, batch = 1)
+function sci_train!(ann, data::Tuple, opt = Adam(); device = cpu, epoch = 1, batch = 1)
     X, Y = data |> device
     L = size(X, 2)
     data = Flux.Data.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
@@ -187,7 +187,7 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(ann, dl::Flux.Data.DataLoader, opt = ADAM(); device = cpu, epoch = 1)
+function sci_train!(ann, dl::Flux.Data.DataLoader, opt = Adam(); device = cpu, epoch = 1)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device

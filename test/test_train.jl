@@ -3,7 +3,7 @@ nn1 = FnChain(FnDense(21, 21, tanh), FnDense(21, 21))
 
 X = randn(Float32, 21, 10)
 Y = rand(Float32, 21, 10)
-sci_train!(nn, (X, Y), ADAM())
+sci_train!(nn, (X, Y), Adam())
 sci_train!(nn, Flux.Data.DataLoader((X, Y)), Adam(); device = cpu, epoch = 1)
 sci_train(nn1, (X, Y))
 

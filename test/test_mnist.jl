@@ -71,7 +71,7 @@ m = args.device(m)
 # optimization
 loss(x, y) = logitcrossentropy(m(x), y)
 evalcb = () -> @show(loss_all(train_data, m))
-opt = ADAM()
+opt = Adam()
 
 # training
 @epochs args.epochs Flux.train!(loss, params(m), train_data, opt, cb = evalcb)

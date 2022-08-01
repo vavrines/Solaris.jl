@@ -16,7 +16,7 @@
     end
     ps = Flux.params(model)
     data = repeat([(x, y)], 10)
-    opt = ADAM()
+    opt = Adam()
     cb = () -> Flux.reset!(model)
     Solaris.tracker_mode()
     Flux.train!(loss, ps, data, opt, cb = cb)
