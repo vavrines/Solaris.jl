@@ -53,6 +53,42 @@ function sci_train(
 
 end
 
+function sci_train(
+    ann::Lux.AbstractExplicitLayer,
+    data::Union{Flux.Data.DataLoader,Tuple},
+    ps = setup(ann),
+    opt = ADAM(),
+    adtype = Optimization.AutoZygote(),
+    args...;
+    device = cpu,
+    maxiters = 200::Integer,
+    kwargs...,
+)
+
+    data = data |> device
+    θ, st = ps
+    θ = θ |> device
+    L = size(data[1], 2)
+    loss(p) = sum(abs2, ann(data[1], p, st)[1] - data[2]) / L
+
+    cb = function (p, l)
+        println("loss: $(loss(p))")
+        return false
+    end
+
+    return sci_train(
+        loss,
+        θ,
+        opt,
+        adtype,
+        args...;
+        cb = Flux.throttle(cb, 1),
+        maxiters = maxiters,
+        kwargs...,
+    )
+
+end
+
 """
 $(SIGNATURES)
 """
