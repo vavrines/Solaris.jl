@@ -15,12 +15,14 @@ using OptimizationOptimJL
 using OptimizationOptimisers
 using OptimizationPolyalgorithms
 using PyCall
+using Random
 using Zygote
 using ZygoteRules
 import Lux
 import Tracker
 
-export FastDense, FastChain, Shortcut
+export SR
+export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
 export init_params, param_length
 export sci_train, sci_train!
@@ -31,5 +33,6 @@ include("Layer/layer.jl")
 include("train.jl")
 
 const tf = PyNULL()
+const SR = Solaris
 
 end
