@@ -1,10 +1,3 @@
-struct FastChain{T<:Tuple}
-    layers::T
-    function FastChain(xs...)
-        layers = getfunc.(xs)
-        new{typeof(layers)}(layers)
-    end
-end
 getfunc(x) = x
 getfunc(x::Tuple) = first(x)
 
@@ -14,6 +7,18 @@ applychain(fs::Tuple, x, p) = applychain(
     first(fs)(x, p[1:param_length(first(fs))]),
     p[(param_length(first(fs))+1):end],
 )
-(c::FastChain)(x, p) = applychain(c.layers, x, p)
-param_length(c::FastChain) = sum(paramlength(x) for x in c.layers)
-init_params(c::FastChain) = vcat(init_params.(c.layers)...)
+
+struct FnChain{T<:Tuple} <: AbstractExplicitChain
+    layers::T
+
+    function FnChain(xs...)
+        layers = getfunc.(xs)
+        new{typeof(layers)}(layers)
+    end
+end
+
+(c::FnChain)(x, p) = applychain(c.layers, x, p)
+
+param_length(c::FnChain) = sum(paramlength(x) for x in c.layers)
+
+init_params(c::FnChain) = vcat(init_params.(c.layers)...)

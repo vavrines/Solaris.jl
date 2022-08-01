@@ -188,7 +188,7 @@ function FastICNN(
     precision = Float32,
 ) where {TI<:Integer,TT<:Union{Tuple,AbstractVector}}
 
-    layers = (FastDense(din, layer_sizes[1], activation),)
+    layers = (FnDense(din, layer_sizes[1], activation),)
 
     if length(layer_sizes) > 1
         i = 1
