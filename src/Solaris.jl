@@ -1,22 +1,28 @@
 module Solaris
 
 using CSV
-using CUDA: CuArray
+using CUDA
 using DataFrames
-using DiffEqFlux
 using ForwardDiff
 using DocStringExtensions
 using Flux
 using JLD2
+using LinearAlgebra
 using Optim
 using Optimization
+using OptimizationFlux
+using OptimizationOptimJL
+using OptimizationOptimisers
 using OptimizationPolyalgorithms
 using PyCall
 using Zygote
+using ZygoteRules
 import Lux
 import Tracker
 
-export Shortcut, Convex, ICNN, FastConvex, FastICNN
+export FastDense, FastChain, Shortcut
+export Convex, ICNN, FastConvex, FastICNN
+export init_params, param_length
 export sci_train, sci_train!
 
 include("widget.jl")

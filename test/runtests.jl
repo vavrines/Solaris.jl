@@ -1,4 +1,5 @@
-using Solaris, Test, Flux, DiffEqFlux, Optim, Tracker
+using Solaris, Test, Flux, Optim, Tracker
+import Lux
 
 include("test_io.jl")
 include("test_layer.jl")

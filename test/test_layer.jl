@@ -12,5 +12,5 @@ icnnc(randn(4))
 # fast icnn
 fil = FastConvex(4, 4, 4)
 fic = FastICNN(4, 1, [10, 10])
-fil(rand(4), rand(4), initial_params(fil))
-fic(rand(4), initial_params(fic))
+fil(rand(4), rand(4), init_params(fil))
+fic(rand(4), init_params(fic))

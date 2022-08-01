@@ -21,7 +21,7 @@ Scientific machine learning trainer
 function sci_train(
     ann,
     data::Union{Flux.Data.DataLoader,Tuple},
-    θ = initial_params(ann),
+    θ = init_params(ann),
     opt = ADAM(),
     adtype = Optimization.AutoZygote(),
     args...;

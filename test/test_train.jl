@@ -8,7 +8,7 @@ sci_train!(nn, Flux.Data.DataLoader((X, Y)), ADAM(); device = cpu, epoch = 1)
 sci_train(nn1, (X, Y))
 
 loss(p) = nn1(X, p) |> sum
-p1 = initial_params(nn1)
+p1 = init_params(nn1)
 sci_train(loss, p1)
 
 cd(@__DIR__)
