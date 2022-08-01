@@ -136,7 +136,7 @@ Scientific machine learning trainer
 function sci_train!(ann, data::Tuple, opt = ADAM(); device = cpu, epoch = 1, batch = 1)
     X, Y = data |> device
     L = size(X, 2)
-    data = Flux.Data.DataLoader((X, Y), batchsize = batch, shuffle = true) |> device
+    data = Flux.Data.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
 
     ann = device(ann)
     ps = Flux.params(ann)
@@ -154,7 +154,7 @@ $(SIGNATURES)
 function sci_train!(ann, dl::Flux.Data.DataLoader, opt = ADAM(); device = cpu, epoch = 1)
     X, Y = dl.data |> device
     L = size(X, 2)
-    dl = dl |> device
+    #dl = dl |> device
 
     ann = device(ann)
     ps = Flux.params(ann)
