@@ -17,7 +17,7 @@ The implementation is lengthy since broadcasting over dictionary and NamedTuple 
 """
 function init_params(c::Lux.Chain)
     ps = init_params(first(c.layers))
-    for i in 2:length(c.layers)
+    for i = 2:length(c.layers)
         ps = [ps; init_params(c.layers[i])]
     end
 

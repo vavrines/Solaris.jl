@@ -5,6 +5,9 @@ Random.seed!(rng, 0)
 
 x = Lux.Dense(2, 50)
 
+Lux.setup(x) = Lux.setup(Random.default_rng(), x)
+
+p, st = setup(x)
 p, st = Lux.setup(rng, x)
 
 Lux.initialparameters(rng, x)
@@ -17,8 +20,8 @@ Lux.initialstates(rng, x)
 using Zygote
 
 struct LuxLinear <: Lux.AbstractExplicitLayer
-    init_A
-    init_B
+    init_A::Any
+    init_B::Any
 end
 
 function LuxLinear(A::AbstractArray, B::AbstractArray)
@@ -28,10 +31,10 @@ function LuxLinear(A::AbstractArray, B::AbstractArray)
 end
 
 # `B` is a parameter
-Lux.initialparameters(rng::AbstractRNG, layer::LuxLinear) = (B=layer.init_B(),)
+Lux.initialparameters(rng::AbstractRNG, layer::LuxLinear) = (B = layer.init_B(),)
 
 # `A` is a state
-Lux.initialstates(rng::AbstractRNG, layer::LuxLinear) = (A=layer.init_A(),)
+Lux.initialstates(rng::AbstractRNG, layer::LuxLinear) = (A = layer.init_A(),)
 
 (l::LuxLinear)(x, ps, st) = st.A * ps.B * x, st
 

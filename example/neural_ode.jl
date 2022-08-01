@@ -31,7 +31,7 @@ function loss(p)
     pred = solve(prob_node, Midpoint(), u0 = u0, p = p, saveat = tsteps) |> Array
     #pred = predict_neuralode(p)
     loss = sum(abs2, ode_data .- pred)
-    
+
     return loss
 end
 
@@ -40,8 +40,16 @@ cb = function (p, l)
     return false
 end
 
-res = sci_train(loss, p, ADAM(0.05), Optimization.AutoZygote(); callback = cb, maxiters = 300)
-res = sci_train(loss, res.u, LBFGS(), Optimization.AutoZygote(); callback = cb, maxiters = 300)
+res =
+    sci_train(loss, p, ADAM(0.05), Optimization.AutoZygote(); callback = cb, maxiters = 300)
+res = sci_train(
+    loss,
+    res.u,
+    LBFGS(),
+    Optimization.AutoZygote();
+    callback = cb,
+    maxiters = 300,
+)
 
 #sol = prob_neuralode(u0, res.u, st)
 sol = solve(prob_node, Midpoint(), u0 = u0, p = res.u, saveat = tsteps)

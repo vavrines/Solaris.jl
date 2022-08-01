@@ -1,7 +1,7 @@
 DiffEqFlux.paramlength(f::FastConvex) = f.out * (f.zin + f.xin + 1)
 DiffEqFlux.initial_params(f::FastConvex) = f.initial_params()
 
-param_length(f::DiffEqFlux.FastDense) = f.out*(f.in+f.bias)
+param_length(f::DiffEqFlux.FastDense) = f.out * (f.in + f.bias)
 init_params(f::DiffEqFlux.FastDense) = f.initial_params()
 
 DiffEqFlux.initial_params(c::FastICNN) = vcat(initial_params.(c.layers)...)

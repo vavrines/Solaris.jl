@@ -59,11 +59,7 @@ L1 = loss(X, Y)
 affine chain
 """
 
-m = Chain(
-    Dense(28^2, 128, relu),
-    Dense(128, 32, relu),
-    Dense(32, 10),
-)
+m = Chain(Dense(28^2, 128, relu), Dense(128, 32, relu), Dense(32, 10))
 
 # regularization
 sqnorm(x) = sum(abs2, x)
