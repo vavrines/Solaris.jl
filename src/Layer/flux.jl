@@ -1,6 +1,6 @@
-# ------------------------------------------------------------
-# Extended Flux.Chain
-# ------------------------------------------------------------
+"""
+Extended Flux.Chain method
+"""
 function Flux.Chain(D::Integer, N::Integer, σ::Function)
     t = ()
     for i = 1:N

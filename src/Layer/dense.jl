@@ -18,20 +18,22 @@ ifgpufree(x::Adjoint{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) =
 ifgpufree(x::Transpose{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) =
     CUDA.unsafe_free!((x.data).parent)
 
+"""
+$(TYPEDEF)
 
+Dense layer `activation.(W*x + b)` with input size `in` and output size `out`.
+The `activation` function defaults to `identity`, meaning the layer is an affine function.
+Initial parameters are taken to match `Flux.Dense`. 'bias' represents b in the layer and 
+it defaults to true. 'precache' is used to preallocate memory for the intermediate variables 
+calculated during each pass. This avoids heap allocations in each pass which would otherwise 
+slow down the computation, it defaults to false. This function has specializations on `tanh` 
+for a slightly faster adjoint with Zygote.
+
+# Fields
+
+$(FIELDS)
 """
-FastDense(in,out,activation=identity;
-          bias = true, precache = false ,initW = Flux.glorot_uniform, initb = Flux.zeros32)
-A Dense layer `activation.(W*x + b)` with input size `in` and output size `out`.
-The `activation` function defaults to `identity`, meaning the layer is an affine
-function. Initial parameters are taken to match `Flux.Dense`. 'bias' represents b in
-the layer and it defaults to true.'precache' is used to preallocate memory for the
-intermediate variables calculated during each pass. This avoids heap allocations
-in each pass which would otherwise slow down the computation, it defaults to false.
-Note that this function has specializations on `tanh` for a slightly faster
-adjoint with Zygote.
-"""
-struct FastDense{F,F2,C} <: AbstractExplicitLayer
+struct FnDense{F,F2,C} <: AbstractExplicitLayer
     out::Int
     in::Int
     σ::F
@@ -39,7 +41,8 @@ struct FastDense{F,F2,C} <: AbstractExplicitLayer
     cache::C
     bias::Bool
     numcols::Int
-    function FastDense(
+
+    function FnDense(
         in::Integer,
         out::Integer,
         σ = identity;
@@ -86,14 +89,13 @@ struct FastDense{F,F2,C} <: AbstractExplicitLayer
     end
 end
 
-# To work with scalars(x::Number)
-(f::FastDense)(x::Number, p) = (
+(f::FnDense)(x::Number, p) = (
     (f.bias == true) ?
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
-ZygoteRules.@adjoint function (f::FastDense)(x::Number, p)
+ZygoteRules.@adjoint function (f::FnDense)(x::Number, p)
     if typeof(f.cache) <: Nothing
         if !isgpu(p)
             W = @view(p[reshape(1:(f.out*f.in), f.out, f.in)])
@@ -122,7 +124,7 @@ ZygoteRules.@adjoint function (f::FastDense)(x::Number, p)
         end
         f.cache.yvec .= f.σ.(@view(f.cache.r[:, 1]))
     end
-    function FastDense_adjoint(ȳ)
+    function FnDense_adjoint(ȳ)
         if typeof(f.cache) <: Nothing
             if typeof(f.σ) <: typeof(NNlib.tanh_fast)
                 zbar = ȳ .* (1 .- y .^ 2)
@@ -167,20 +169,19 @@ ZygoteRules.@adjoint function (f::FastDense)(x::Number, p)
         end
     end
     if typeof(f.cache) <: Nothing
-        y, FastDense_adjoint
+        y, FnDense_adjoint
     else
-        f.cache.yvec, FastDense_adjoint
+        f.cache.yvec, FnDense_adjoint
     end
 end
 
-# (f::FastDense)(x,p) = f.σ.(reshape(uview(p,1:(f.out*f.in)),f.out,f.in)*x .+ uview(p,(f.out*f.in+1):lastindex(p)))
-(f::FastDense)(x::AbstractVector, p) = (
+(f::FnDense)(x::AbstractVector, p) = (
     (f.bias == true) ?
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
-ZygoteRules.@adjoint function (f::FastDense)(x::AbstractVector, p)
+ZygoteRules.@adjoint function (f::FnDense)(x::AbstractVector, p)
     if typeof(f.cache) <: Nothing
         if !isgpu(p)
             W = @view(p[reshape(1:(f.out*f.in), f.out, f.in)])
@@ -209,7 +210,7 @@ ZygoteRules.@adjoint function (f::FastDense)(x::AbstractVector, p)
         end
         f.cache.yvec .= f.σ.(@view(f.cache.r[:, 1]))
     end
-    function FastDense_adjoint(ȳ)
+    function FnDense_adjoint(ȳ)
         if typeof(f.cache) <: Nothing
             if typeof(f.σ) <: typeof(NNlib.tanh_fast)
                 zbar = ȳ .* (1 .- y .^ 2)
@@ -253,19 +254,19 @@ ZygoteRules.@adjoint function (f::FastDense)(x::AbstractVector, p)
         end
     end
     if typeof(f.cache) <: Nothing
-        y, FastDense_adjoint
+        y, FnDense_adjoint
     else
-        f.cache.yvec, FastDense_adjoint
+        f.cache.yvec, FnDense_adjoint
     end
 end
 
-(f::FastDense)(x::AbstractMatrix, p) = (
+(f::FnDense)(x::AbstractMatrix, p) = (
     (f.bias == true) ?
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
-ZygoteRules.@adjoint function (f::FastDense)(x::AbstractMatrix, p)
+ZygoteRules.@adjoint function (f::FnDense)(x::AbstractMatrix, p)
     if typeof(f.cache) <: Nothing
         if !isgpu(p)
             W = @view(p[reshape(1:(f.out*f.in), f.out, f.in)])
@@ -294,7 +295,7 @@ ZygoteRules.@adjoint function (f::FastDense)(x::AbstractMatrix, p)
         @view(f.cache.y[:, 1:f.cache.cols[1]]) .=
             f.σ.(@view(f.cache.r[:, 1:f.cache.cols[1]]))
     end
-    function FastDense_adjoint(ȳ)
+    function FnDense_adjoint(ȳ)
         if typeof(f.cache) <: Nothing
             if typeof(f.σ) <: typeof(NNlib.tanh_fast)
                 zbar = ȳ .* (1 .- y .^ 2)
@@ -349,13 +350,14 @@ ZygoteRules.@adjoint function (f::FastDense)(x::AbstractMatrix, p)
         end
     end
     if typeof(f.cache) <: Nothing
-        y, FastDense_adjoint
+        y, FnDense_adjoint
     elseif f.numcols == f.cache.cols[1]
-        f.cache.y, FastDense_adjoint
+        f.cache.y, FnDense_adjoint
     else
-        @view(f.cache.y[:, 1:f.cache.cols[1]]), FastDense_adjoint
+        @view(f.cache.y[:, 1:f.cache.cols[1]]), FnDense_adjoint
     end
 end
 
-param_length(f::FastDense) = f.out * (f.in + f.bias)
-init_params(f::FastDense) = f.initial_params()
+param_length(f::FnDense) = f.out * (f.in + f.bias)
+
+init_params(f::FnDense) = f.initial_params()
