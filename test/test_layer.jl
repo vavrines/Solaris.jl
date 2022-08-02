@@ -14,3 +14,15 @@ fil = FastConvex(4, 4, 4)
 fic = FastICNN(4, 1, [10, 10])
 fil(rand(4), rand(4), init_params(fil))
 fic(rand(4), init_params(fic))
+
+# Lux
+m = Lux.Dense(2, 2)
+SR.init_params(m)
+SR.setup(m)
+
+# Flux
+SR.dense_layer(2, 2)
+m = Flux.Chain(2, 2, tanh)
+
+# Resnet
+Shortcut(m, +, tanh)
