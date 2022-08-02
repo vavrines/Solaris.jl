@@ -12,7 +12,6 @@ using Optim
 using Optimization
 using OptimizationFlux
 using OptimizationOptimJL
-using OptimizationOptimisers
 using OptimizationPolyalgorithms
 using PyCall
 using Random
