@@ -19,6 +19,6 @@ end
 
 (c::FnChain)(x, p) = applychain(c.layers, x, p)
 
-param_length(c::FnChain) = sum(paramlength(x) for x in c.layers)
+param_length(c::FnChain) = sum(param_length(x) for x in c.layers)
 
 init_params(c::FnChain) = vcat(init_params.(c.layers)...)
