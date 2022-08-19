@@ -12,10 +12,10 @@ Scientific machine learning trainer
 - ``data``: dataset
 - ``θ``: parameters of neural network
 - ``opt``: optimizer
-- ``adtype``: automatical differentiation type
+- ``ad``: automatical differentiation type
 - ``args``: rest arguments
 - ``device``: cpu / gpu
-- ``maxiters``: maximal iteration number
+- ``iters``: maximal iteration number
 - ``kwargs``: keyword arguments
 """
 function sci_train(
@@ -23,10 +23,10 @@ function sci_train(
     data::Union{Flux.Data.DataLoader,Tuple},
     θ = init_params(ann),
     opt = Flux.Adam(),
-    adtype = Optimization.AutoZygote(),
     args...;
     device = cpu,
-    maxiters = 200::Integer,
+    iters = 200::Integer,
+    ad = Optimization.AutoZygote(),
     kwargs...,
 )
 
@@ -44,10 +44,10 @@ function sci_train(
         loss,
         θ,
         opt,
-        adtype,
         args...;
         cb = Flux.throttle(cb, 1),
-        maxiters = maxiters,
+        iters = iters,
+        ad = ad,
         kwargs...,
     )
 
@@ -58,10 +58,10 @@ function sci_train(
     data::Union{Flux.Data.DataLoader,Tuple},
     ps = setup(ann),
     opt = Flux.Adam(),
-    adtype = Optimization.AutoZygote(),
     args...;
     device = cpu,
-    maxiters = 200::Integer,
+    iters = 200::Integer,
+    ad = Optimization.AutoZygote(),
     kwargs...,
 )
 
@@ -80,10 +80,10 @@ function sci_train(
         loss,
         θ,
         opt,
-        adtype,
         args...;
         cb = Flux.throttle(cb, 1),
-        maxiters = maxiters,
+        iters = iters,
+        ad = ad,
         kwargs...,
     )
 
@@ -96,17 +96,17 @@ function sci_train(
     loss,
     θ,
     opt = OptimizationPolyalgorithms.PolyOpt(),
-    adtype = nothing,
     args...;
     lower_bounds = nothing,
     upper_bounds = nothing,
     cb = nothing,
     callback = (args...) -> (false),
-    maxiters = nothing,
+    iters = nothing,
+    ad = nothing,
     kwargs...,
 )
 
-    if adtype === nothing
+    if ad === nothing
         if length(θ) < 50
             fdtime = try
                 ForwardDiff.gradient(x -> first(loss(x)), θ)
@@ -123,22 +123,22 @@ function sci_train(
 
             if fdtime == zytime == Inf
                 @warn "AD methods failed, using numerical differentiation. To debug, try ForwardDiff.gradient(loss, θ) or Zygote.gradient(loss, θ)"
-                adtype = Optimization.AutoFiniteDiff()
+                ad = Optimization.AutoFiniteDiff()
             elseif fdtime < zytime
-                adtype = Optimization.AutoForwardDiff()
+                ad = Optimization.AutoForwardDiff()
             else
-                adtype = Optimization.AutoZygote()
+                ad = Optimization.AutoZygote()
             end
 
         else
-            adtype = Optimization.AutoZygote()
+            ad = Optimization.AutoZygote()
         end
     end
     if !isnothing(cb)
         callback = cb
     end
 
-    optf = Optimization.OptimizationFunction((x, p) -> loss(x), adtype)
+    optf = Optimization.OptimizationFunction((x, p) -> loss(x), ad)
     optprob = Optimization.OptimizationProblem(
         optf,
         θ;
@@ -146,8 +146,8 @@ function sci_train(
         ub = upper_bounds,
         kwargs...,
     )
-    if maxiters !== nothing
-        Optimization.solve(optprob, opt, args...; maxiters, callback = callback, kwargs...)
+    if iters !== nothing
+        Optimization.solve(optprob, opt, args...; maxiters = iters, callback = callback, kwargs...)
     else
         Optimization.solve(optprob, opt, args...; callback = callback, kwargs...)
     end
