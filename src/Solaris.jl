@@ -17,6 +17,7 @@ using PyCall
 using Random
 using Zygote
 using ZygoteRules
+using IterTools: ncycle
 import Lux
 import Tracker
 
