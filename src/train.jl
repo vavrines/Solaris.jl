@@ -94,7 +94,7 @@ $(SIGNATURES)
 """
 function sci_train(
     loss,
-    θ,
+    θ::AbstractVector,
     opt = OptimizationPolyalgorithms.PolyOpt(),
     args...;
     lower_bounds = nothing,
@@ -103,36 +103,12 @@ function sci_train(
     callback = (args...) -> (false),
     iters = nothing,
     ad = nothing,
+    epochs = nothing,
     kwargs...,
 )
 
     if ad === nothing
-        if length(θ) < 50
-            fdtime = try
-                ForwardDiff.gradient(x -> first(loss(x)), θ)
-                @elapsed ForwardDiff.gradient(x -> first(loss(x)), θ)
-            catch
-                Inf
-            end
-            zytime = try
-                Zygote.gradient(x -> first(loss(x)), θ)
-                @elapsed Zygote.gradient(x -> first(loss(x)), θ)
-            catch
-                Inf
-            end
-
-            if fdtime == zytime == Inf
-                @warn "AD methods failed, using numerical differentiation. To debug, try ForwardDiff.gradient(loss, θ) or Zygote.gradient(loss, θ)"
-                ad = Optimization.AutoFiniteDiff()
-            elseif fdtime < zytime
-                ad = Optimization.AutoForwardDiff()
-            else
-                ad = Optimization.AutoZygote()
-            end
-
-        else
-            ad = Optimization.AutoZygote()
-        end
+        ad = adapt_adtype(loss, θ)
     end
     if !isnothing(cb)
         callback = cb
@@ -146,11 +122,66 @@ function sci_train(
         ub = upper_bounds,
         kwargs...,
     )
+
     if iters !== nothing
-        Optimization.solve(optprob, opt, args...; maxiters = iters, callback = callback, kwargs...)
+        return Optimization.solve(optprob, opt, args...; maxiters = iters, callback = callback, kwargs...)
     else
-        Optimization.solve(optprob, opt, args...; callback = callback, kwargs...)
+        return Optimization.solve(optprob, opt, args...; callback = callback, kwargs...)
     end
+
+end
+
+function sci_train(
+    loss,
+    θ::AbstractVector,
+    data::Union{Flux.Data.DataLoader,Tuple},
+    opt = OptimizationPolyalgorithms.PolyOpt(),
+    args...;
+    lower_bounds = nothing,
+    upper_bounds = nothing,
+    cb = nothing,
+    callback = (args...) -> (false),
+    iters = nothing,
+    ad = nothing,
+    epochs = nothing,
+    batch = 1,
+    shuffle = true,
+    kwargs...,
+)
+
+    if ad === nothing
+        ad = adapt_adtype(loss, θ)
+    end
+    if !isnothing(cb)
+        callback = cb
+    end
+
+    optf = Optimization.OptimizationFunction((x, p, α, β) -> loss(x, α, β), ad)
+    optprob = Optimization.OptimizationProblem(
+        optf,
+        θ;
+        lb = lower_bounds,
+        ub = upper_bounds,
+        kwargs...,
+    )
+    
+    dl = begin
+        if data isa Tuple
+            Flux.Data.DataLoader(data, batchsize = batch, shuffle = shuffle)
+        else
+            data
+        end
+    end
+    if !isnothing(epochs)
+        dl = ncycle(dl, epochs)
+    end
+
+    if iters !== nothing
+        return Optimization.solve(optprob, opt, dl, args...; maxiters = iters, callback = callback, kwargs...)
+    else
+        return Optimization.solve(optprob, opt, dl, args...; callback = callback, kwargs...)
+    end
+
 end
 
 sci_train(loss, p::NamedTuple, args...; kwargs...) =
@@ -227,4 +258,40 @@ function sci_train!(
     )
 
     return nothing
+end
+
+
+"""
+$(SIGNATURES)
+
+Choose automatic differentiation backend adaptively
+"""
+function adapt_adtype(loss, θ)
+    if length(θ) < 50
+        fdtime = try
+            ForwardDiff.gradient(x -> first(loss(x)), θ)
+            @elapsed ForwardDiff.gradient(x -> first(loss(x)), θ)
+        catch
+            Inf
+        end
+
+        zytime = try
+            Zygote.gradient(x -> first(loss(x)), θ)
+            @elapsed Zygote.gradient(x -> first(loss(x)), θ)
+        catch
+            Inf
+        end
+
+        if fdtime == zytime == Inf
+            ad = Optimization.AutoFiniteDiff()
+        elseif fdtime < zytime
+            ad = Optimization.AutoForwardDiff()
+        else
+            ad = Optimization.AutoZygote()
+        end
+    else
+        ad = Optimization.AutoZygote()
+    end
+
+    return ad
 end
