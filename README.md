@@ -5,7 +5,7 @@
     alt="Solaris Logo" width="300">
   </img>
 
-  ![CI](https://img.shields.io/github/workflow/status/vavrines/Solaris.jl/CI?style=flat-square)
+  ![CI](https://img.shields.io/github/actions/workflow/status/vavrines/Solaris.jl/ci.yml?branch=main&style=flat-square)
   [![codecov](https://img.shields.io/codecov/c/github/vavrines/Solaris.jl?style=flat-square)](https://codecov.io/gh/vavrines/Solaris.jl)
 </div>
 
