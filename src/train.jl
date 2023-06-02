@@ -185,7 +185,7 @@ function sci_train(
 end
 
 sci_train(loss, p::NamedTuple, args...; kwargs...) =
-    sci_train(loss, Lux.ComponentArray(p), args...; kwargs...)
+    sci_train(loss, ComponentArray(p), args...; kwargs...)
 
 """
 $(SIGNATURES)

@@ -1,5 +1,6 @@
 module Solaris
 
+using ComponentArrays
 using CSV
 using CUDA
 using DataFrames
