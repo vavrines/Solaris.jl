@@ -1,4 +1,4 @@
-using Lux, Random, Solaris
+using Lux, Random, Solaris, ComponentArrays
 
 init_params(Dense(21, 21))
 init_params(Chain(Dense(21, 21), Dense(21, 21)))
@@ -13,7 +13,7 @@ Lux.initialparameters(rng, nn)
 Lux.initialstates(rng, nn)
 
 p, st = SR.setup(nn)
-p1 = Lux.ComponentArray(p)
+p1 = ComponentArray(p)
 
 X = randn(Float32, 2, 10)
 Y = rand(Float32, 2, 10)

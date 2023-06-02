@@ -1,6 +1,7 @@
-using Lux, OrdinaryDiffEq, Flux, Optimization, Optim, Random, Plots
-using DiffEqFlux: NeuralODE
+using Lux, Optimization, SciMLSensitivity, Optim, Random
+using ComponentArrays, OrdinaryDiffEq, SciMLSensitivity, Plots
 using Solaris: sci_train
+using Flux: Adam
 
 rng = Random.default_rng()
 Random.seed!(rng, 0)
@@ -20,7 +21,7 @@ ode_data = Array(solve(prob_trueode, Tsit5(), saveat = tsteps))
 
 nn = Lux.Chain(ActivationFunction(x -> x .^ 3), Lux.Dense(2, 50, tanh), Lux.Dense(50, 2))
 p, st = Lux.setup(rng, nn)
-p1 = Lux.ComponentArray(p)
+p1 = ComponentArray(p)
 
 #prob_neuralode = NeuralODE(nn, tspan, Tsit5(), saveat = tsteps)
 #predict_neuralode(p) = Array(prob_neuralode(u0, p, st)[1])
@@ -41,12 +42,12 @@ cb = function (p, l)
 end
 
 res =
-    sci_train(loss, p, Adam(0.05), Optimization.AutoZygote(); callback = cb, maxiters = 300)
+    sci_train(loss, p, Adam(0.05); ad = Optimization.AutoZygote(), callback = cb, maxiters = 300)
 res = sci_train(
     loss,
     res.u,
-    LBFGS(),
-    Optimization.AutoZygote();
+    LBFGS();
+    ad = Optimization.AutoZygote(),
     callback = cb,
     maxiters = 300,
 )
