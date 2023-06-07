@@ -6,7 +6,6 @@ using CUDA
 using DataFrames
 using ForwardDiff
 using DocStringExtensions
-using Flux
 using JLD2
 using LinearAlgebra
 using Optim
@@ -14,11 +13,13 @@ using Optimization
 using OptimizationFlux
 using OptimizationOptimJL
 using OptimizationPolyalgorithms
+using ProgressLogging
 using PyCall
 using Random
 using Zygote
 using ZygoteRules
 using IterTools: ncycle
+import Flux
 import Lux
 import Tracker
 

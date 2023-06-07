@@ -1,5 +1,5 @@
-using Solaris, Test, Flux, Optim, Tracker
-import Lux
+using Solaris, Test, Optim, Tracker
+import Flux, Lux
 
 cd(@__DIR__)
 

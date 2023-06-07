@@ -5,6 +5,19 @@
 """
 $(SIGNATURES)
 
+Flux's previous @epochs macro
+"""
+macro epochs(n, ex)
+    :(@progress for i = 1:$(esc(n))
+        @info "Epoch $i"
+        $(esc(ex))
+    end)
+end
+
+
+"""
+$(SIGNATURES)
+
 Scientific machine learning trainer
 
 # Arguments
@@ -24,7 +37,7 @@ function sci_train(
     θ = init_params(ann),
     opt = Flux.Adam(),
     args...;
-    device = cpu,
+    device = Flux.cpu,
     iters = 200::Integer,
     ad = Optimization.AutoZygote(),
     kwargs...,
@@ -200,7 +213,7 @@ Scientific machine learning trainer
 - ``batch``: batch size
 - ``device``: cpu / gpu
 """
-function sci_train!(ann, data::Tuple, opt = Flux.Adam(); device = cpu, epoch = 1, batch = 1)
+function sci_train!(ann, data::Tuple, opt = Flux.Adam(); device = Flux.cpu, epoch = 1, batch = 1)
     X, Y = data |> device
     L = size(X, 2)
     data = Flux.Data.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
@@ -210,7 +223,7 @@ function sci_train!(ann, data::Tuple, opt = Flux.Adam(); device = cpu, epoch = 1
     loss(x, y) = sum(abs2, ann(x) - y) / L
     cb = () -> println("loss: $(loss(X, Y))")
 
-    Flux.@epochs epoch Flux.train!(loss, ps, data, opt, cb = Flux.throttle(cb, 1))
+    @epochs epoch Flux.train!(loss, ps, data, opt, cb = Flux.throttle(cb, 1))
 
     return nothing
 end
@@ -218,7 +231,7 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(ann, dl::Flux.Data.DataLoader, opt = Flux.Adam(); device = cpu, epoch = 1)
+function sci_train!(ann, dl::Flux.Data.DataLoader, opt = Flux.Adam(); device = Flux.cpu, epoch = 1)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device
@@ -228,7 +241,7 @@ function sci_train!(ann, dl::Flux.Data.DataLoader, opt = Flux.Adam(); device = c
     loss(x, y) = sum(abs2, ann(x) - y) / L
     cb = () -> println("loss: $(loss(X, Y))")
 
-    Flux.@epochs epoch Flux.train!(loss, ps, dl, opt, cb = Flux.throttle(cb, 1))
+    @epochs epoch Flux.train!(loss, ps, dl, opt, cb = Flux.throttle(cb, 1))
 
     return nothing
 end
@@ -241,7 +254,7 @@ Trainer for Tensorflow model
 function sci_train!(
     ann::PyObject,
     data::Tuple;
-    device = cpu,
+    device = Flux.cpu,
     split = 0.0,
     epoch = 1,
     batch = 64,

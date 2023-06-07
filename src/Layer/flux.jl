@@ -7,7 +7,7 @@ function Flux.Chain(D::Integer, N::Integer, σ::Function)
         t = (t..., Dense(D, D, σ))
     end
 
-    return Chain(t...)
+    return Flux.Chain(t...)
 end
 
 
@@ -26,8 +26,8 @@ function dense_layer(
     precision = Float32,
 ) where {T<:Integer}
     if isBias
-        return Dense(fw(precision, out, in), fb(precision, out), σ)
+        return Flux.Dense(fw(precision, out, in), fb(precision, out), σ)
     else
-        return Dense(fw(precision, out, in), Flux.Zeros(precision, out), σ)
+        return Flux.Dense(fw(precision, out, in), Flux.Zeros(precision, out), σ)
     end
 end
