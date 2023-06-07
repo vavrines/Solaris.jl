@@ -16,4 +16,4 @@ sci_train(loss1, p1, (X, Y), Flux.Adam())
 
 cd(@__DIR__)
 model = load_model("model.h5"; mode = :tf)
-sci_train!(model, (randn(Float32, 1, 4), randn(Float32, 1, 1)))
+#sci_train!(model, (randn(Float32, 1, 4), randn(Float32, 1, 1)))
