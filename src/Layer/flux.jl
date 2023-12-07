@@ -4,7 +4,7 @@ Extended Flux.Chain method
 function Flux.Chain(D::Integer, N::Integer, σ::Function)
     t = ()
     for i = 1:N
-        t = (t..., Dense(D, D, σ))
+        t = (t..., Flux.Dense(D, D, σ))
     end
 
     return Flux.Chain(t...)

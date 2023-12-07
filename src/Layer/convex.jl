@@ -42,7 +42,7 @@ function (m::Convex)(z::AbstractArray, x::AbstractArray)
     sx = size(x)
     z = reshape(z, sz[1], :)
     x = reshape(x, sx[1], :)
-    z = σ.(softplus.(W) * z + U * x .+ b)
+    z = σ.(Flux.softplus.(W) * z + U * x .+ b)
 
     return reshape(z, :, sz[2:end]...)
 end
@@ -74,7 +74,7 @@ function ICNN(
     precision = Float32,
 ) where {TI<:Integer,TT<:Union{Tuple,AbstractVector}}
 
-    layers = (Dense(din, layer_sizes[1], activation),)
+    layers = (Flux.Dense(din, layer_sizes[1], activation),)
 
     if length(layer_sizes) > 1
         i = 1
@@ -165,7 +165,7 @@ end
 
 function (f::FastConvex)(z, x, p)
     f.σ.(
-        softplus.(reshape(p[1:(f.out*f.zin)], f.out, f.zin)) * z .+
+        Flux.softplus.(reshape(p[1:(f.out*f.zin)], f.out, f.zin)) * z .+
         reshape(p[f.out*f.zin+1:(f.out*f.zin+f.out*f.xin)], f.out, f.xin) * x .+
         p[(f.out*f.zin+f.out*f.xin+1):end],
     )

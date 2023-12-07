@@ -1,7 +1,7 @@
 name = "Solaris"
 uuid = "c31bc6c7-79d6-424e-a85f-5b42ee086500"
 authors = ["Tianbai Xiao <tianbaixiao@gmail.com>"]
-version = "0.2.9"
+version = "0.2.10"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -15,6 +15,7 @@ IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Lux = "b2108857-7c20-44ae-9111-449ecde12c47"
+NNlib = "872c559c-99b0-510c-b3b7-b6c96a88d5cd"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
 Optimization = "7f7a1694-90dd-40f0-9382-eb1efda571ba"
 OptimizationFlux = "253f991c-a7b2-45f8-8852-8b9a9df78a86"
@@ -26,6 +27,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 ZygoteRules = "700de1a5-db45-46bc-99cf-38207098b444"
+cuDNN = "02a925ec-e4fe-4b08-9a7e-0d78e3d38ccd"
 
 [compat]
 CSV = "0.8, 0.9, 0.10"
@@ -39,9 +41,9 @@ IterTools = "^1"
 JLD2 = "0.4"
 LinearAlgebra = "<0.0.1, 1"
 Lux = "0.4, 0.5"
+NNlib = "0.8, 0.9"
 Optim = "^1"
 Optimization = "^3"
-OptimizationFlux = "0.1"
 OptimizationOptimJL = "0.1"
 OptimizationPolyalgorithms = "0.1"
 ProgressLogging = "0.1"
@@ -50,6 +52,7 @@ Random = "<0.0.1, 1"
 Tracker = "0.2"
 Zygote = "0.6"
 ZygoteRules = "0.2"
+cuDNN = "^1"
 julia = "^1"
 
 [extras]
