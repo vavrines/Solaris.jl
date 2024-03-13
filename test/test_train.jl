@@ -4,7 +4,7 @@ nn1 = FnChain(FnDense(21, 21, tanh), FnDense(21, 21))
 X = randn(Float32, 21, 10)
 Y = rand(Float32, 21, 10)
 sci_train!(nn, (X, Y), Flux.Adam())
-sci_train!(nn, Flux.Data.DataLoader((X, Y)), Flux.Adam(); device = Flux.cpu, epoch = 1)
+sci_train!(nn, Flux.DataLoader((X, Y)), Flux.Adam(); device = Flux.cpu, epoch = 1)
 sci_train(nn1, (X, Y))
 
 loss(p) = nn1(X, p) |> sum

@@ -33,7 +33,7 @@ Scientific machine learning trainer
 """
 function sci_train(
     ann,
-    data::Union{Flux.Data.DataLoader,Tuple},
+    data::Union{Flux.DataLoader,Tuple},
     θ = init_params(ann),
     opt = Flux.Adam(),
     args...;
@@ -49,7 +49,7 @@ function sci_train(
     loss(p) = sum(abs2, ann(data[1], p) - data[2]) / L
 
     cb = function (p, l)
-        println("loss: $(loss(p))")
+        println("loss: $l")
         return false
     end
 
@@ -68,7 +68,7 @@ end
 
 function sci_train(
     ann::Lux.AbstractExplicitLayer,
-    data::Union{Flux.Data.DataLoader,Tuple},
+    data::Union{Flux.DataLoader,Tuple},
     ps = setup(ann),
     opt = Flux.Adam(),
     args...;
@@ -85,7 +85,7 @@ function sci_train(
     loss(p) = sum(abs2, ann(data[1], p, st)[1] - data[2]) / L
 
     cb = function (p, l)
-        println("loss: $(loss(p))")
+        println("loss: $l")
         return false
     end
 
@@ -147,7 +147,7 @@ end
 function sci_train(
     loss,
     θ::AbstractVector,
-    data::Union{Flux.Data.DataLoader,Tuple},
+    data::Union{Flux.DataLoader,Tuple},
     opt = OptimizationPolyalgorithms.PolyOpt(),
     args...;
     lower_bounds = nothing,
@@ -180,7 +180,7 @@ function sci_train(
     
     dl = begin
         if data isa Tuple
-            Flux.Data.DataLoader(data, batchsize = batch, shuffle = shuffle)
+            Flux.DataLoader(data, batchsize = batch, shuffle = shuffle)
         else
             data
         end
@@ -216,7 +216,7 @@ Scientific machine learning trainer
 function sci_train!(ann, data::Tuple, opt = Flux.Adam(); device = Flux.cpu, epoch = 1, batch = 1)
     X, Y = data |> device
     L = size(X, 2)
-    data = Flux.Data.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
+    data = Flux.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
 
     ann = device(ann)
     ps = Flux.params(ann)
@@ -231,7 +231,7 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(ann, dl::Flux.Data.DataLoader, opt = Flux.Adam(); device = Flux.cpu, epoch = 1)
+function sci_train!(ann, dl::Flux.DataLoader, opt = Flux.Adam(); device = Flux.cpu, epoch = 1)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device

@@ -1,6 +1,5 @@
 using Solaris
 using Flux, Statistics
-using Flux.Data: DataLoader
 using Flux: onehotbatch, onecold, logitcrossentropy, throttle, @epochs
 using Base.Iterators: repeated
 using MLDatasets
