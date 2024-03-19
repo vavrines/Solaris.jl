@@ -13,15 +13,15 @@ ifgpufree(x::CUDA.CuArray) = CUDA.unsafe_free!(x)
 ifgpufree(x::Transpose{<:Any,<:CUDA.CuArray}) = CUDA.unsafe_free!(x.parent)
 ifgpufree(x::Adjoint{<:Any,<:CUDA.CuArray}) = CUDA.unsafe_free!(x.parent)
 
-const TrackedArray = Tracker.TrackedArray
-isgpu(::Adjoint{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) = true
-isgpu(::TrackedArray{<:Any,<:Any,<:CUDA.CuArray}) = true
-isgpu(::Transpose{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) = true
-ifgpufree(x::TrackedArray{<:Any,<:Any,<:CUDA.CuArray}) = CUDA.unsafe_free!(x.data)
-ifgpufree(x::Adjoint{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) =
-    CUDA.unsafe_free!((x.data).parent)
-ifgpufree(x::Transpose{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) =
-    CUDA.unsafe_free!((x.data).parent)
+#const TrackedArray = Tracker.TrackedArray
+#isgpu(::Adjoint{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) = true
+#isgpu(::TrackedArray{<:Any,<:Any,<:CUDA.CuArray}) = true
+#isgpu(::Transpose{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) = true
+#ifgpufree(x::TrackedArray{<:Any,<:Any,<:CUDA.CuArray}) = CUDA.unsafe_free!(x.data)
+#ifgpufree(x::Adjoint{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) =
+#    CUDA.unsafe_free!((x.data).parent)
+#ifgpufree(x::Transpose{<:Any,TrackedArray{<:Any,<:Any,<:CUDA.CuArray}}) =
+#    CUDA.unsafe_free!((x.data).parent)
 
 """
 $(TYPEDEF)
