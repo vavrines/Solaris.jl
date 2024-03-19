@@ -1,9 +1,3 @@
-# ============================================================
-# I/O Methods
-# ============================================================
-
-export load_data, load_model, save_model
-
 """
 $(SIGNATURES)
 
@@ -11,7 +5,7 @@ Load dataset from file
 """
 function load_data(file; mode = :csv, dlm = nothing)
     if mode == :csv
-        dataset = CSV.File(file; delim = dlm) |> DataFrame
+        dataset = File(file; delim = dlm) |> DataFrame
     end
 
     return dataset

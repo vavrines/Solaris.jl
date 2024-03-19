@@ -1,9 +1,7 @@
 module Solaris
 
 using ComponentArrays
-using CSV
 using CUDA
-using DataFrames
 using ForwardDiff
 using DocStringExtensions
 using JLD2
@@ -14,21 +12,25 @@ using Optimization
 using OptimizationFlux
 using OptimizationOptimJL
 using OptimizationPolyalgorithms
-using ProgressLogging
 using PyCall
 using Random
 using Zygote
-using ZygoteRules
+
+using CSV: File
+using DataFrames: DataFrame
 using IterTools: ncycle
+using ProgressLogging: @progress
+using ZygoteRules: @adjoint
+
 import Flux
 import Lux
-import Tracker
 
 export SR
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
 export init_params, param_length
 export sci_train, sci_train!
+export load_data, load_model, save_model
 
 include("widget.jl")
 include("io.jl")

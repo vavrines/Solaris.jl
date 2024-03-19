@@ -100,7 +100,7 @@ end
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
-ZygoteRules.@adjoint function (f::FastDense)(x::Number, p)
+@adjoint function (f::FastDense)(x::Number, p)
     if typeof(f.cache) <: Nothing
         if !isgpu(p)
             W = @view(p[reshape(1:(f.out*f.in), f.out, f.in)])
@@ -186,7 +186,7 @@ end
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
-ZygoteRules.@adjoint function (f::FastDense)(x::AbstractVector, p)
+@adjoint function (f::FastDense)(x::AbstractVector, p)
     if typeof(f.cache) <: Nothing
         if !isgpu(p)
             W = @view(p[reshape(1:(f.out*f.in), f.out, f.in)])
@@ -271,7 +271,7 @@ end
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
-ZygoteRules.@adjoint function (f::FastDense)(x::AbstractMatrix, p)
+@adjoint function (f::FastDense)(x::AbstractMatrix, p)
     if typeof(f.cache) <: Nothing
         if !isgpu(p)
             W = @view(p[reshape(1:(f.out*f.in), f.out, f.in)])
