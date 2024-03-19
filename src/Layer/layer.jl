@@ -10,6 +10,7 @@ include("flux.jl")
 include("lux.jl")
 include("resnet.jl")
 include("convex.jl")
+include("diffeqflux.jl")
 
 param_length(f) = 0
 init_params(f) = Flux.destructure(f)[1]
