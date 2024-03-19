@@ -41,8 +41,14 @@ cb = function (p, l)
     return false
 end
 
-res =
-    sci_train(loss, p, Adam(0.05); ad = Optimization.AutoZygote(), callback = cb, maxiters = 300)
+res = sci_train(
+    loss,
+    p,
+    Adam(0.05);
+    ad = Optimization.AutoZygote(),
+    callback = cb,
+    maxiters = 300,
+)
 res = sci_train(
     loss,
     res.u,

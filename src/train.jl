@@ -120,7 +120,14 @@ function sci_train(
     )
 
     if iters !== nothing
-        return Optimization.solve(optprob, opt, args...; maxiters = iters, callback = callback, kwargs...)
+        return Optimization.solve(
+            optprob,
+            opt,
+            args...;
+            maxiters = iters,
+            callback = callback,
+            kwargs...,
+        )
     else
         return Optimization.solve(optprob, opt, args...; callback = callback, kwargs...)
     end
@@ -160,7 +167,7 @@ function sci_train(
         ub = upper_bounds,
         kwargs...,
     )
-    
+
     dl = begin
         if data isa Tuple
             Flux.DataLoader(data, batchsize = batch, shuffle = shuffle)
@@ -173,7 +180,15 @@ function sci_train(
     end
 
     if iters !== nothing
-        return Optimization.solve(optprob, opt, dl, args...; maxiters = iters, callback = callback, kwargs...)
+        return Optimization.solve(
+            optprob,
+            opt,
+            dl,
+            args...;
+            maxiters = iters,
+            callback = callback,
+            kwargs...,
+        )
     else
         return Optimization.solve(optprob, opt, dl, args...; callback = callback, kwargs...)
     end
@@ -196,7 +211,14 @@ Scientific machine learning trainer
 - ``batch``: batch size
 - ``device``: cpu / gpu
 """
-function sci_train!(ann, data::Tuple, opt = Flux.Adam(); device = Flux.cpu, epoch = 1, batch = 1)
+function sci_train!(
+    ann,
+    data::Tuple,
+    opt = Flux.Adam();
+    device = Flux.cpu,
+    epoch = 1,
+    batch = 1,
+)
     X, Y = data |> device
     L = size(X, 2)
     data = Flux.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
@@ -214,7 +236,13 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(ann, dl::Flux.DataLoader, opt = Flux.Adam(); device = Flux.cpu, epoch = 1)
+function sci_train!(
+    ann,
+    dl::Flux.DataLoader,
+    opt = Flux.Adam();
+    device = Flux.cpu,
+    epoch = 1,
+)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device
