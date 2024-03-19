@@ -366,3 +366,5 @@ end
 param_length(f::FastDense) = f.out * (f.in + f.bias)
 
 init_params(f::FastDense) = f.initial_params()
+
+apply(m::FastDense, x, p) = m(x, p)

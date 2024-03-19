@@ -33,13 +33,7 @@ struct FnDense{F,F2} <: AbstractExplicitLayer
         initial_params() = temp
 
         _σ = NNlib.fast_act(σ)
-        new{typeof(_σ),typeof(initial_params)}(
-            in,
-            out,
-            _σ,
-            initial_params,
-            bias,
-        )
+        new{typeof(_σ),typeof(initial_params)}(in, out, _σ, initial_params, bias)
     end
 end
 
@@ -64,3 +58,5 @@ end
 param_length(f::FnDense) = f.out * (f.in + f.bias)
 
 init_params(f::FnDense) = f.initial_params()
+
+apply(m::FnDense, x, p) = m(x, p)

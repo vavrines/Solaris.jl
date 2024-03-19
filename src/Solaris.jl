@@ -28,9 +28,9 @@ import Lux
 export SR
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
-export init_params, param_length
-export sci_train, sci_train!
+export init_params, param_length, apply
 export load_data, load_model, save_model
+export sci_train, sci_train!
 
 include("widget.jl")
 include("io.jl")
