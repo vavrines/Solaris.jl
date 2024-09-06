@@ -1,4 +1,4 @@
-using Lux, Optimization, SciMLSensitivity, Optim, Random
+using Lux, Optimization, SciMLSensitivity, OptimizationOptimJL, Random
 using ComponentArrays, OrdinaryDiffEq, SciMLSensitivity, Plots
 using Solaris: sci_train
 using Flux: Adam

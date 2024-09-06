@@ -7,7 +7,6 @@ using DocStringExtensions
 using JLD2
 using LinearAlgebra
 using NNlib
-using Optim
 using Optimization
 using OptimizationFlux
 using OptimizationOptimJL

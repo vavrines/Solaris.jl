@@ -1,4 +1,4 @@
-using Solaris, Test, Optim
+using Solaris, Test
 import Flux, Lux
 
 cd(@__DIR__)
