@@ -18,6 +18,7 @@ using Zygote
 
 using CSV: File
 using DataFrames: DataFrame
+using Functors: fmap
 using IterTools: ncycle
 using ProgressLogging: @progress
 using ZygoteRules: @adjoint
