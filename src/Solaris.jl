@@ -26,6 +26,7 @@ import Flux
 import Lux
 
 export SR
+export AutoForwardDiff, AutoReverseDiff, AutoTracker, AutoZygote, AutoEnzyme
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
 export init_params, param_length, apply
