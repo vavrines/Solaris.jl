@@ -3,6 +3,8 @@ Dated dense layer in DiffEqFlux
 
 """
 
+using ZygoteRules: @adjoint
+
 isgpu(x) = false
 ifgpufree(x) = nothing
 

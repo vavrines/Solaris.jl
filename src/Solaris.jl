@@ -20,7 +20,6 @@ using DataFrames: DataFrame
 using Functors: fmap
 using IterTools: ncycle
 using ProgressLogging: @progress
-using ZygoteRules: @adjoint
 
 import Flux
 import Lux
