@@ -13,7 +13,7 @@ Lux.setup(rng, dd)
 
 # Convex
 
-struct FConvex{I<:Integer,F1,F2} <: Lux.AbstractExplicitLayer
+struct FConvex{I<:Integer,F1,F2} <: Lux.AbstractLuxLayer
     zin::I
     xin::I
     out::I

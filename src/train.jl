@@ -50,7 +50,7 @@ function sci_train(
 end
 
 function sci_train(
-    ann::Lux.AbstractExplicitLayer,
+    ann::Lux.AbstractLuxLayer,
     data::Union{Flux.DataLoader,Tuple},
     ps = setup(ann),
     opt = Flux.Adam(),

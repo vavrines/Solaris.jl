@@ -25,7 +25,7 @@ sci_train(nn, (X, Y))
 #--- definition ---#
 using Zygote
 
-struct LuxLinear <: Lux.AbstractExplicitLayer
+struct LuxLinear <: Lux.AbstractLuxLayer
     init_A::Any
     init_B::Any
 end
