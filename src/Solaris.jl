@@ -1,31 +1,31 @@
 module Solaris
 
-using ComponentArrays
-using CUDA
-using ForwardDiff
 using DocStringExtensions
 using JLD2
 using LinearAlgebra
 using NNlib
 using Optimization
-using OptimizationFlux
-using OptimizationOptimJL
+using OptimizationOptimisers
 using OptimizationPolyalgorithms
 using PyCall
 using Random
 using Zygote
 
 using CSV: File
+using ComponentArrays: ComponentArray
 using DataFrames: DataFrame
 using Functors: fmap
 using IterTools: ncycle
+using NNlib: fast_act
 using ProgressLogging: @progress
 
+import ForwardDiff
 import Flux
 import Lux
 
 export SR
 export AutoForwardDiff, AutoReverseDiff, AutoTracker, AutoZygote, AutoEnzyme
+export Descent, Adam, AdamW, PolyOpt
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
 export init_params, param_length, apply

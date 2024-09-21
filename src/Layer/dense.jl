@@ -32,7 +32,7 @@ struct FnDense{F,F2} <: AbstractExplicitLayer
         )
         initial_params() = temp
 
-        _σ = NNlib.fast_act(σ)
+        _σ = fast_act(σ)
         new{typeof(_σ),typeof(initial_params)}(in, out, _σ, initial_params, bias)
     end
 end

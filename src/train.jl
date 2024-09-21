@@ -18,11 +18,11 @@ function sci_train(
     ann,
     data::Union{Flux.DataLoader,Tuple},
     θ = init_params(ann),
-    opt = Flux.Adam(),
+    opt = Adam(),
     args...;
     device = Flux.cpu,
     iters = 200::Integer,
-    ad = Optimization.AutoZygote(),
+    ad = AutoZygote(),
     kwargs...,
 )
 
@@ -53,11 +53,11 @@ function sci_train(
     ann::Lux.AbstractLuxLayer,
     data::Union{Flux.DataLoader,Tuple},
     ps = setup(ann),
-    opt = Flux.Adam(),
+    opt = Adam(),
     args...;
     device = cpu,
     iters = 200::Integer,
-    ad = Optimization.AutoZygote(),
+    ad = AutoZygote(),
     kwargs...,
 )
 
@@ -91,7 +91,7 @@ $(SIGNATURES)
 function sci_train(
     loss,
     θ::AbstractVector,
-    opt = OptimizationPolyalgorithms.PolyOpt(),
+    opt = PolyOpt(),
     args...;
     lower_bounds = nothing,
     upper_bounds = nothing,
@@ -138,7 +138,7 @@ function sci_train(
     loss,
     θ::AbstractVector,
     data::Union{Flux.DataLoader,Tuple},
-    opt = OptimizationPolyalgorithms.PolyOpt(),
+    opt = PolyOpt(),
     args...;
     lower_bounds = nothing,
     upper_bounds = nothing,
@@ -214,7 +214,7 @@ Scientific machine learning trainer
 function sci_train!(
     ann,
     data::Tuple,
-    opt = Flux.Adam();
+    opt = Adam();
     device = Flux.cpu,
     epoch = 1,
     batch = 1,
@@ -239,7 +239,7 @@ $(SIGNATURES)
 function sci_train!(
     ann,
     dl::Flux.DataLoader,
-    opt = Flux.Adam();
+    opt = Adam();
     device = Flux.cpu,
     epoch = 1,
 )
@@ -307,14 +307,14 @@ function adapt_adtype(loss, θ)
         end
 
         if fdtime == zytime == Inf
-            ad = Optimization.AutoFiniteDiff()
+            ad = AutoFiniteDiff()
         elseif fdtime < zytime
-            ad = Optimization.AutoForwardDiff()
+            ad = AutoForwardDiff()
         else
-            ad = Optimization.AutoZygote()
+            ad = AutoZygote()
         end
     else
-        ad = Optimization.AutoZygote()
+        ad = AutoZygote()
     end
 
     return ad
