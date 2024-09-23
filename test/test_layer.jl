@@ -18,7 +18,9 @@ fic(rand(4), init_params(fic))
 # Lux
 m = Lux.Dense(2, 2)
 SR.init_params(m)
-SR.setup(m)
+ps, st = SR.setup(m)
+SR.stateful(m, st)
+SR.stateful(m, ps, st)
 
 # Flux
 SR.dense_layer(2, 2)
