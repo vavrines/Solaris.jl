@@ -25,7 +25,6 @@ function sci_train(
     ad = AutoZygote(),
     kwargs...,
 )
-
     data = data |> device
     θ = θ |> device
     L = size(data[1], 2)
@@ -46,7 +45,6 @@ function sci_train(
         ad = ad,
         kwargs...,
     )
-
 end
 
 function sci_train(
@@ -60,7 +58,6 @@ function sci_train(
     ad = AutoZygote(),
     kwargs...,
 )
-
     data = data |> device
     θ, st = ps
     θ = θ |> device
@@ -82,7 +79,6 @@ function sci_train(
         ad = ad,
         kwargs...,
     )
-
 end
 
 """
@@ -91,18 +87,17 @@ $(SIGNATURES)
 function sci_train(
     loss,
     θ::AbstractVector,
-    opt = PolyOpt(),
+    opt = Adam(),
     args...;
     lower_bounds = nothing,
     upper_bounds = nothing,
     cb = nothing,
     callback = (args...) -> (false),
-    iters = nothing,
+    iters = 200,
     ad = nothing,
     epochs = nothing,
     kwargs...,
 )
-
     if ad === nothing
         ad = adapt_adtype(loss, θ)
     end
@@ -119,54 +114,39 @@ function sci_train(
         kwargs...,
     )
 
-    if iters !== nothing
-        return Optimization.solve(
-            optprob,
-            opt,
-            args...;
-            maxiters = iters,
-            callback = callback,
-            kwargs...,
-        )
-    else
-        return Optimization.solve(optprob, opt, args...; callback = callback, kwargs...)
-    end
-
+    return Optimization.solve(
+        optprob,
+        opt,
+        args...;
+        maxiters = iters,
+        callback = callback,
+        kwargs...,
+    )
 end
 
 function sci_train(
     loss,
     θ::AbstractVector,
     data::Union{Flux.DataLoader,Tuple},
-    opt = PolyOpt(),
+    opt = Adam(),
     args...;
     lower_bounds = nothing,
     upper_bounds = nothing,
     cb = nothing,
     callback = (args...) -> (false),
-    iters = nothing,
+    iters = 200,
     ad = nothing,
     epochs = nothing,
     batch = 1,
     shuffle = true,
     kwargs...,
 )
-
     if ad === nothing
         ad = adapt_adtype(loss, θ)
     end
     if !isnothing(cb)
         callback = cb
     end
-
-    optf = Optimization.OptimizationFunction((x, p, α, β) -> loss(x, α, β), ad)
-    optprob = Optimization.OptimizationProblem(
-        optf,
-        θ;
-        lb = lower_bounds,
-        ub = upper_bounds,
-        kwargs...,
-    )
 
     dl = begin
         if data isa Tuple
@@ -179,20 +159,24 @@ function sci_train(
         dl = ncycle(dl, epochs)
     end
 
-    if iters !== nothing
-        return Optimization.solve(
-            optprob,
-            opt,
-            dl,
-            args...;
-            maxiters = iters,
-            callback = callback,
-            kwargs...,
-        )
-    else
-        return Optimization.solve(optprob, opt, dl, args...; callback = callback, kwargs...)
-    end
+    optf = Optimization.OptimizationFunction(loss, ad)
+    optprob = Optimization.OptimizationProblem(
+        optf,
+        θ,
+        dl;
+        lb = lower_bounds,
+        ub = upper_bounds,
+        kwargs...,
+    )
 
+    return Optimization.solve(
+        optprob,
+        opt,
+        args...;
+        maxiters = iters,
+        callback = callback,
+        kwargs...,
+    )
 end
 
 sci_train(loss, p::NamedTuple, args...; kwargs...) =

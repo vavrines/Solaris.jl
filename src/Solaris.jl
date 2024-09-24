@@ -5,8 +5,6 @@ using JLD2
 using LinearAlgebra
 using NNlib
 using Optimization
-using OptimizationOptimisers
-using OptimizationPolyalgorithms
 using PyCall
 using Random
 using Zygote
@@ -17,6 +15,8 @@ using DataFrames: DataFrame
 using Functors: fmap
 using IterTools: ncycle
 using NNlib: fast_act
+using OptimizationOptimisers: Descent, Adam, AdamW
+using OptimizationOptimJL: BFGS, LBFGS
 using ProgressLogging: @progress
 
 import ForwardDiff
@@ -25,7 +25,7 @@ import Lux
 
 export SR
 export AutoForwardDiff, AutoReverseDiff, AutoTracker, AutoZygote, AutoEnzyme
-export Descent, Adam, AdamW, PolyOpt
+export Descent, Adam, AdamW, BFGS, LBFGS
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
 export init_params, param_length, apply
