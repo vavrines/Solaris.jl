@@ -9,6 +9,7 @@ using Random
 using CSV: File
 using ComponentArrays: ComponentArray
 using DataFrames: DataFrame
+using Flux: DataLoader
 using Functors: fmap
 using IterTools: ncycle
 using NNlib: fast_act

@@ -8,27 +8,33 @@ Scientific machine learning trainer
 - ``data``: dataset
 - ``θ``: parameters of neural network
 - ``opt``: optimizer
-- ``ad``: automatical differentiation type
 - ``args``: rest arguments
 - ``device``: cpu / gpu
 - ``iters``: maximal iteration number
-- ``kwargs``: keyword arguments
+- ``ad``: automatical differentiation type
+- ``batch``: batch size
+- ``shuffle``: shuffle data (true) or not (false)
+- ``kwargs``: rest keyword arguments
 """
 function sci_train(
     ann,
-    data::Union{Flux.DataLoader,Tuple},
+    data::Union{DataLoader,Tuple},
     θ = init_params(ann),
     opt = Adam(),
     args...;
     device = Flux.cpu,
     iters = 200::Integer,
     ad = AutoZygote(),
+    batch = 1,
+    shuffle = true,
     kwargs...,
 )
-    data = data |> device
-    θ = θ |> device
-    L = size(data[1], 2)
-    loss(p) = sum(abs2, ann(data[1], p) - data[2]) / L
+    function loss(p, _data)
+        batch_x, batch_y = _data
+        L = size(batch_x, 2)
+        pred = ann(batch_x, p)
+        return sum(abs2, pred - batch_y) / L
+    end
 
     cb = function (p, l)
         println("loss: $l")
@@ -38,31 +44,42 @@ function sci_train(
     return sci_train(
         loss,
         θ,
+        data,
         opt,
         args...;
+        device = device,
         cb = Flux.throttle(cb, 1),
         iters = iters,
         ad = ad,
+        batch = batch,
+        shuffle = shuffle,
         kwargs...,
     )
 end
 
 function sci_train(
     ann::Lux.AbstractLuxLayer,
-    data::Union{Flux.DataLoader,Tuple},
+    data::Union{DataLoader,Tuple},
     ps = setup(ann),
     opt = Adam(),
     args...;
-    device = cpu,
+    device = Flux.cpu,
     iters = 200::Integer,
     ad = AutoZygote(),
+    batch = 1,
+    shuffle = true,
     kwargs...,
 )
-    data = data |> device
+    ann = ann |> device
     θ, st = ps
-    θ = θ |> device
-    L = size(data[1], 2)
-    loss(p) = sum(abs2, ann(data[1], p, st)[1] - data[2]) / L
+    st = st |> device
+    model = stateful(ann, st)
+    function loss(p, _data)
+        batch_x, batch_y = _data
+        L = size(batch_x, 2)
+        pred = model(batch_x, p)
+        return sum(abs2, pred - batch_y) / L
+    end
 
     cb = function (p, l)
         println("loss: $l")
@@ -72,11 +89,15 @@ function sci_train(
     return sci_train(
         loss,
         θ,
+        data,
         opt,
         args...;
+        device = device,
         cb = Flux.throttle(cb, 1),
         iters = iters,
         ad = ad,
+        batch = batch,
+        shuffle = shuffle,
         kwargs...,
     )
 end
@@ -89,6 +110,7 @@ function sci_train(
     θ::AbstractVector,
     opt = Adam(),
     args...;
+    device = Flux.cpu,
     lower_bounds = nothing,
     upper_bounds = nothing,
     cb = nothing,
@@ -104,6 +126,7 @@ function sci_train(
     if !isnothing(cb)
         callback = cb
     end
+    θ = θ |> device
 
     optf = Optimization.OptimizationFunction((x, p) -> loss(x), ad)
     optprob = Optimization.OptimizationProblem(
@@ -127,9 +150,10 @@ end
 function sci_train(
     loss,
     θ::AbstractVector,
-    data::Union{Flux.DataLoader,Tuple},
+    data::Union{DataLoader,Tuple},
     opt = Adam(),
     args...;
+    device = Flux.cpu,
     lower_bounds = nothing,
     upper_bounds = nothing,
     cb = nothing,
@@ -150,14 +174,13 @@ function sci_train(
 
     dl = begin
         if data isa Tuple
-            Flux.DataLoader(data, batchsize = batch, shuffle = shuffle)
+            DataLoader(data, batchsize = batch, shuffle = shuffle)
         else
             data
         end
     end
-    if !isnothing(epochs)
-        dl = ncycle(dl, epochs)
-    end
+    dl = dl |> device
+    θ = θ |> device
 
     optf = Optimization.OptimizationFunction(loss, ad)
     optprob = Optimization.OptimizationProblem(
@@ -175,6 +198,7 @@ function sci_train(
         args...;
         maxiters = iters,
         callback = callback,
+        epochs = epochs,
         kwargs...,
     )
 end
@@ -198,7 +222,7 @@ Scientific machine learning trainer
 function sci_train!(ann, data::Tuple, opt = Adam(); device = Flux.cpu, epoch = 1, batch = 1)
     X, Y = data |> device
     L = size(X, 2)
-    data = Flux.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
+    data = DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
 
     ann = device(ann)
     ps = Flux.params(ann)
@@ -213,7 +237,7 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(ann, dl::Flux.DataLoader, opt = Adam(); device = Flux.cpu, epoch = 1)
+function sci_train!(ann, dl::DataLoader, opt = Adam(); device = Flux.cpu, epoch = 1)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device
