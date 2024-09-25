@@ -1,7 +1,14 @@
 getfn(x) = x
 getfn(x::Tuple) = first(x)
 
+"""
+$(SIGNATURES)
+"""
 apply(::Tuple{}, x, p) = x
+
+"""
+$(SIGNATURES)
+"""
 apply(fs::Tuple, x, p) = apply(
     Base.tail(fs),
     first(fs)(x, p[1:param_length(first(fs))]),
@@ -19,8 +26,12 @@ end
 
 (c::FnChain)(x, p) = apply(c.layers, x, p)
 
+"""
+$(SIGNATURES)
+"""
 param_length(c::FnChain) = sum(param_length(x) for x in c.layers)
 
+"""
+$(SIGNATURES)
+"""
 init_params(c::FnChain) = vcat(init_params.(c.layers)...)
-
-apply(c::Lux.Chain, x, p, st) = c(x, p, st)[1]

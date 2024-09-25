@@ -55,8 +55,23 @@ end
     (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
 )
 
+"""
+$(SIGNATURES)
+
+Calculate number of model parameters
+"""
 param_length(f::FnDense) = f.out * (f.in + f.bias)
 
+"""
+$(SIGNATURES)
+
+Initialize model parameters
+"""
 init_params(f::FnDense) = f.initial_params()
 
+"""
+$(SIGNATURES)
+
+Apply model with specific parameters and states
+"""
 apply(m::FnDense, x, p) = m(x, p)

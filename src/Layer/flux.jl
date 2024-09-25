@@ -10,7 +10,6 @@ function Flux.Chain(D::Integer, N::Integer, σ::Function)
     return Flux.Chain(t...)
 end
 
-
 """
 $(SIGNATURES)
 
@@ -31,3 +30,13 @@ function dense_layer(
         return Flux.Dense(fw(precision, out, in), Flux.Zeros(precision, out), σ)
     end
 end
+
+"""
+$(SIGNATURES)
+"""
+param_length(f) = length(init_params(f))
+
+"""
+$(SIGNATURES)
+"""
+init_params(f) = Flux.destructure(f)[1]
