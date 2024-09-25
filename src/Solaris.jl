@@ -1,13 +1,10 @@
 module Solaris
 
 using DocStringExtensions
-using JLD2
 using LinearAlgebra
-using NNlib
 using Optimization
 using PyCall
 using Random
-using Zygote
 
 using CSV: File
 using ComponentArrays: ComponentArray
@@ -19,16 +16,18 @@ using OptimizationOptimisers: Descent, Adam, AdamW
 using OptimizationOptimJL: BFGS, LBFGS
 using ProgressLogging: @progress
 
-import ForwardDiff
 import Flux
+import ForwardDiff
+import JLD2
 import Lux
+import Zygote
 
 export SR
 export AutoForwardDiff, AutoReverseDiff, AutoTracker, AutoZygote, AutoEnzyme
 export Descent, Adam, AdamW, BFGS, LBFGS
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
-export init_params, param_length, apply
+export init_params
 export load_data, load_model, save_model
 export sci_train, sci_train!
 
