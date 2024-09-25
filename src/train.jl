@@ -195,14 +195,7 @@ Scientific machine learning trainer
 - ``batch``: batch size
 - ``device``: cpu / gpu
 """
-function sci_train!(
-    ann,
-    data::Tuple,
-    opt = Adam();
-    device = Flux.cpu,
-    epoch = 1,
-    batch = 1,
-)
+function sci_train!(ann, data::Tuple, opt = Adam(); device = Flux.cpu, epoch = 1, batch = 1)
     X, Y = data |> device
     L = size(X, 2)
     data = Flux.DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
@@ -220,13 +213,7 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(
-    ann,
-    dl::Flux.DataLoader,
-    opt = Adam();
-    device = Flux.cpu,
-    epoch = 1,
-)
+function sci_train!(ann, dl::Flux.DataLoader, opt = Adam(); device = Flux.cpu, epoch = 1)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device

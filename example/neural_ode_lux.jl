@@ -41,22 +41,8 @@ cb = function (p, l)
     return false
 end
 
-res = sci_train(
-    loss,
-    p,
-    Adam(0.05);
-    ad = AutoZygote(),
-    callback = cb,
-    maxiters = 300,
-)
-res = sci_train(
-    loss,
-    res.u,
-    LBFGS();
-    ad = AutoZygote(),
-    callback = cb,
-    maxiters = 300,
-)
+res = sci_train(loss, p, Adam(0.05); ad = AutoZygote(), callback = cb, maxiters = 300)
+res = sci_train(loss, res.u, LBFGS(); ad = AutoZygote(), callback = cb, maxiters = 300)
 
 #sol = prob_neuralode(u0, res.u, st)
 sol = solve(prob_node, Midpoint(), u0 = u0, p = res.u, saveat = tsteps)
