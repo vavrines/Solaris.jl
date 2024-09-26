@@ -28,7 +28,7 @@ export AutoForwardDiff, AutoReverseDiff, AutoTracker, AutoZygote, AutoEnzyme
 export Descent, Adam, AdamW, BFGS, LBFGS
 export FnDense, FnChain, Shortcut
 export Convex, ICNN, FastConvex, FastICNN
-export init_params
+export init_params, default_callback
 export load_data, load_model, save_model
 export sci_train, sci_train!
 

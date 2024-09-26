@@ -18,7 +18,7 @@ sci_train(loss, p1)
 #sci_train(loss, p2)
 
 loss1(p, (x, y)) = sum(abs2, nn1(x, p) - y)
-sci_train(loss1, p1, (X, Y))
+sci_train(loss1, p1, (X, Y); cb = default_callback)
 
 #loss1(p, x, y) = sum(abs2, nn2(x, p) - y)
 #sci_train(loss1, p2, (X, Y), Flux.Adam())

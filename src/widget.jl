@@ -42,3 +42,13 @@ Transform NamedTuple to vector
 - ``ps``: NamedTuple of parameters
 """
 nametuple_vector(ps::NamedTuple) = Vector(ComponentArray(ps))
+
+"""
+$(SIGNATURES)
+
+Default callback function for Optimization solver
+"""
+function default_callback(θ, l)
+    println("loss: $l")
+    return false
+end
