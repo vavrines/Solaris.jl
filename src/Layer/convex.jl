@@ -3,7 +3,7 @@ $(TYPEDEF)
     
 Input Convex Neural Network (ICNN) layer by Amos et al.
 """
-struct Convex{T1<:AbstractArray,T2<:Union{Flux.Zeros,AbstractVector},T3} <: AbstractLayer
+struct Convex{T1<:AbstractArray,T2<:AbstractVector,T3} <: AbstractLayer
     W::T1
     U::T1
     b::T2
