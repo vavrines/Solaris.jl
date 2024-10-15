@@ -58,7 +58,7 @@ $(SIGNATURES)
 
 Convert data to CPU
 """
-function cdev(x...)
+function cpu(x...)
     dev = Lux.cpu_device()
     return dev(x...)
 end
@@ -68,7 +68,7 @@ $(SIGNATURES)
 
 Convert data to GPU
 """
-function gdev(x...)
+function gpu(x...)
     dev = Lux.gpu_device()
     return dev(x...)
 end
