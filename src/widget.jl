@@ -52,3 +52,6 @@ function default_callback(θ, l)
     println("loss: $l")
     return false
 end
+
+const cdev = Lux.cpu_device()
+const gdev = Lux.gpu_device()
