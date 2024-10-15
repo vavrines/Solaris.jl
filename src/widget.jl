@@ -53,5 +53,22 @@ function default_callback(θ, l)
     return false
 end
 
-const cdev = Lux.cpu_device()
-const gdev = Lux.gpu_device()
+"""
+$(SIGNATURES)
+
+Convert data to CPU
+"""
+function cdev(x...)
+    dev = Lux.cpu_device()
+    return dev(x...)
+end
+
+"""
+$(SIGNATURES)
+
+Convert data to GPU
+"""
+function gdev(x...)
+    dev = Lux.gpu_device()
+    return dev(x...)
+end
