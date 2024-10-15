@@ -32,8 +32,13 @@ jobs:
         arch:
           - x64
     steps:
-      - run: pip3 install tensorflow --user --break-system-packages
-      - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - run: pip install --user --break-system-packages tensorflow
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
