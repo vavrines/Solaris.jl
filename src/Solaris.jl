@@ -24,6 +24,7 @@ import Lux
 import Zygote
 
 export SR
+export ComponentArray
 export AutoForwardDiff, AutoReverseDiff, AutoTracker, AutoZygote, AutoEnzyme
 export Descent, Adam, AdamW, BFGS, LBFGS
 export FnDense, FnChain, Shortcut

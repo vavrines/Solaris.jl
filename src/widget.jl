@@ -33,6 +33,20 @@ function vector_nametuple(v::AbstractVector, ps::NamedTuple)
     return fmap(get_ps, ps)
 end
 
+vector_nametuple(x::ComponentArray) = NamedTuple(x)
+
+
+"""
+$(SIGNATURES)
+
+Transform NamedTuple to ComponentArray
+
+# Arguments
+- ``ps``: NamedTuple of parameters
+"""
+nametuple_carray(ps::NamedTuple) = ComponentArray(ps)
+
+
 """
 $(SIGNATURES)
 
@@ -41,7 +55,8 @@ Transform NamedTuple to vector
 # Arguments
 - ``ps``: NamedTuple of parameters
 """
-nametuple_vector(ps::NamedTuple) = Vector(ComponentArray(ps))
+nametuple_vector(ps::NamedTuple) = Vector(nametuple_carray(ps))
+
 
 """
 $(SIGNATURES)
@@ -53,6 +68,7 @@ function default_callback(θ, l)
     return false
 end
 
+
 """
 $(SIGNATURES)
 
@@ -62,6 +78,7 @@ function cpu(x...)
     dev = Lux.cpu_device()
     return dev(x...)
 end
+
 
 """
 $(SIGNATURES)
