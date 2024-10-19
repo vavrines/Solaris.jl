@@ -19,14 +19,14 @@ Scientific machine learning trainer
 function sci_train(
     ann,
     data::Union{DataLoader,Tuple},
-    θ = init_params(ann),
-    opt = Adam(),
+    θ=init_params(ann),
+    opt=Adam(),
     args...;
-    device = Flux.cpu,
-    iters = 200::Integer,
-    ad = AutoZygote(),
-    batch = 1,
-    shuffle = true,
+    device=Flux.cpu,
+    iters=200::Integer,
+    ad=AutoZygote(),
+    batch=1,
+    shuffle=true,
     kwargs...,
 )
     function loss(p, _data)
@@ -47,12 +47,12 @@ function sci_train(
         data,
         opt,
         args...;
-        device = device,
-        cb = Flux.throttle(cb, 1),
-        iters = iters,
-        ad = ad,
-        batch = batch,
-        shuffle = shuffle,
+        device=device,
+        cb=Flux.throttle(cb, 1),
+        iters=iters,
+        ad=ad,
+        batch=batch,
+        shuffle=shuffle,
         kwargs...,
     )
 end
@@ -60,14 +60,14 @@ end
 function sci_train(
     ann::Lux.AbstractLuxLayer,
     data::Union{DataLoader,Tuple},
-    ps = setup(ann),
-    opt = Adam(),
+    ps=setup(ann),
+    opt=Adam(),
     args...;
-    device = Flux.cpu,
-    iters = 200::Integer,
-    ad = AutoZygote(),
-    batch = 1,
-    shuffle = true,
+    device=Flux.cpu,
+    iters=200::Integer,
+    ad=AutoZygote(),
+    batch=1,
+    shuffle=true,
     kwargs...,
 )
     ann = ann |> device
@@ -92,12 +92,12 @@ function sci_train(
         data,
         opt,
         args...;
-        device = device,
-        cb = Flux.throttle(cb, 1),
-        iters = iters,
-        ad = ad,
-        batch = batch,
-        shuffle = shuffle,
+        device=device,
+        cb=Flux.throttle(cb, 1),
+        iters=iters,
+        ad=ad,
+        batch=batch,
+        shuffle=shuffle,
         kwargs...,
     )
 end
@@ -108,16 +108,16 @@ $(SIGNATURES)
 function sci_train(
     loss,
     θ::AbstractVector,
-    opt = Adam(),
+    opt=Adam(),
     args...;
-    device = Flux.cpu,
-    lower_bounds = nothing,
-    upper_bounds = nothing,
-    cb = nothing,
-    callback = (args...) -> (false),
-    iters = 200,
-    ad = nothing,
-    epochs = nothing,
+    device=Flux.cpu,
+    lower_bounds=nothing,
+    upper_bounds=nothing,
+    cb=nothing,
+    callback=(args...) -> (false),
+    iters=200,
+    ad=nothing,
+    epochs=nothing,
     kwargs...,
 )
     if ad === nothing
@@ -132,8 +132,8 @@ function sci_train(
     optprob = Optimization.OptimizationProblem(
         optf,
         θ;
-        lb = lower_bounds,
-        ub = upper_bounds,
+        lb=lower_bounds,
+        ub=upper_bounds,
         kwargs...,
     )
 
@@ -141,8 +141,8 @@ function sci_train(
         optprob,
         opt,
         args...;
-        maxiters = iters,
-        callback = callback,
+        maxiters=iters,
+        callback=callback,
         kwargs...,
     )
 end
@@ -151,18 +151,18 @@ function sci_train(
     loss,
     θ::AbstractVector,
     data::Union{DataLoader,Tuple},
-    opt = Adam(),
+    opt=Adam(),
     args...;
-    device = Flux.cpu,
-    lower_bounds = nothing,
-    upper_bounds = nothing,
-    cb = nothing,
-    callback = (args...) -> (false),
-    iters = 200,
-    ad = nothing,
-    epochs = nothing,
-    batch = 1,
-    shuffle = true,
+    device=Flux.cpu,
+    lower_bounds=nothing,
+    upper_bounds=nothing,
+    cb=nothing,
+    callback=(args...) -> (false),
+    iters=200,
+    ad=nothing,
+    epochs=nothing,
+    batch=1,
+    shuffle=true,
     kwargs...,
 )
     if ad === nothing
@@ -174,7 +174,7 @@ function sci_train(
 
     dl = begin
         if data isa Tuple
-            DataLoader(data, batchsize = batch, shuffle = shuffle)
+            DataLoader(data; batchsize=batch, shuffle=shuffle)
         else
             data
         end
@@ -187,8 +187,8 @@ function sci_train(
         optf,
         θ,
         dl;
-        lb = lower_bounds,
-        ub = upper_bounds,
+        lb=lower_bounds,
+        ub=upper_bounds,
         kwargs...,
     )
 
@@ -196,9 +196,9 @@ function sci_train(
         optprob,
         opt,
         args...;
-        maxiters = iters,
-        callback = callback,
-        epochs = epochs,
+        maxiters=iters,
+        callback=callback,
+        epochs=epochs,
         kwargs...,
     )
 end
@@ -219,17 +219,17 @@ Scientific machine learning trainer
 - ``batch``: batch size
 - ``device``: cpu / gpu
 """
-function sci_train!(ann, data::Tuple, opt = Adam(); device = Flux.cpu, epoch = 1, batch = 1)
+function sci_train!(ann, data::Tuple, opt=Adam(); device=Flux.cpu, epoch=1, batch=1)
     X, Y = data |> device
     L = size(X, 2)
-    data = DataLoader((X, Y), batchsize = batch, shuffle = true)# |> device
+    data = DataLoader((X, Y); batchsize=batch, shuffle=true)# |> device
 
     ann = device(ann)
     ps = Flux.params(ann)
     loss(x, y) = sum(abs2, ann(x) - y) / L
     cb = () -> println("loss: $(loss(X, Y))")
 
-    @epochs epoch Flux.train!(loss, ps, data, opt, cb = Flux.throttle(cb, 1))
+    @epochs epoch Flux.train!(loss, ps, data, opt, cb=Flux.throttle(cb, 1))
 
     return nothing
 end
@@ -237,7 +237,7 @@ end
 """
 $(SIGNATURES)
 """
-function sci_train!(ann, dl::DataLoader, opt = Adam(); device = Flux.cpu, epoch = 1)
+function sci_train!(ann, dl::DataLoader, opt=Adam(); device=Flux.cpu, epoch=1)
     X, Y = dl.data |> device
     L = size(X, 2)
     #dl = dl |> device
@@ -247,7 +247,7 @@ function sci_train!(ann, dl::DataLoader, opt = Adam(); device = Flux.cpu, epoch 
     loss(x, y) = sum(abs2, ann(x) - y) / L
     cb = () -> println("loss: $(loss(X, Y))")
 
-    @epochs epoch Flux.train!(loss, ps, dl, opt, cb = Flux.throttle(cb, 1))
+    @epochs epoch Flux.train!(loss, ps, dl, opt, cb=Flux.throttle(cb, 1))
 
     return nothing
 end
@@ -260,25 +260,17 @@ Trainer for Tensorflow model
 function sci_train!(
     ann::PyObject,
     data::Tuple;
-    device = Flux.cpu,
-    split = 0.0,
-    epoch = 1,
-    batch = 64,
-    verbose = 1,
+    device=Flux.cpu,
+    split=0.0,
+    epoch=1,
+    batch=64,
+    verbose=1,
 )
     X, Y = data
-    ann.fit(
-        X,
-        Y,
-        validation_split = split,
-        epochs = epoch,
-        batch_size = batch,
-        verbose = verbose,
-    )
+    ann.fit(X, Y; validation_split=split, epochs=epoch, batch_size=batch, verbose=verbose)
 
     return nothing
 end
-
 
 """
 $(SIGNATURES)

@@ -1,8 +1,8 @@
 using Flux.Losses: logitcrossentropy
 
 # icnn
-icnnl = Convex(4, 4, 1, identity; fw = randn, fb = zeros, precision = Float32)
-icnnc = ICNN(4, 1, [10, 10], identity; fw = randn, fb = zeros, precision = Float32)
+icnnl = Convex(4, 4, 1, identity; fw=randn, fb=zeros, precision=Float32)
+icnnc = ICNN(4, 1, [10, 10], identity; fw=randn, fb=zeros, precision=Float32)
 show(icnnl)
 show(icnnc)
 icnnl(randn(4))

@@ -35,7 +35,7 @@ end
         ys = Flux.unstack(y, 3)
         ŷs = model.(xs)
         l = 0.0f0
-        for t = 1:length(ŷs)
+        for t in 1:length(ŷs)
             l += Flux.mse(ys[t], ŷs[t])
         end
         return l / length(ŷs)
@@ -45,10 +45,10 @@ end
     opt = Adam()
     cb = () -> Flux.reset!(model)
     Solaris.tracker_mode()
-    Flux.train!(loss, ps, data, opt, cb = cb)
+    Flux.train!(loss, ps, data, opt; cb=cb)
 
     ps1 = Flux.params(model)
-    Flux.train!(loss, ps1, data, opt, cb = cb)
+    Flux.train!(loss, ps1, data, opt; cb=cb)
 
     model |> Solaris.untrack
     Solaris.zygote_mode()

@@ -5,7 +5,7 @@ nn1 = FnChain(FnDense(21, 21, tanh), FnDense(21, 21))
 X = randn(Float32, 21, 10)
 Y = rand(Float32, 21, 10)
 sci_train!(nn, (X, Y), Flux.Adam())
-sci_train!(nn, Flux.DataLoader((X, Y)), Flux.Adam(); device = Flux.cpu, epoch = 1)
+sci_train!(nn, Flux.DataLoader((X, Y)), Flux.Adam(); device=Flux.cpu, epoch=1)
 sci_train(nn1, (X, Y))
 #sci_train(nn2, (X, Y))
 
@@ -18,7 +18,7 @@ sci_train(loss, p1)
 #sci_train(loss, p2)
 
 loss1(p, (x, y)) = sum(abs2, nn1(x, p) - y)
-sci_train(loss1, p1, (X, Y); cb = default_callback)
+sci_train(loss1, p1, (X, Y); cb=default_callback)
 
 #loss1(p, x, y) = sum(abs2, nn2(x, p) - y)
 #sci_train(loss1, p2, (X, Y), Flux.Adam())

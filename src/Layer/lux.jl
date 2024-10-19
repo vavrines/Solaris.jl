@@ -25,10 +25,10 @@ $(SIGNATURES)
 
 Transform to Lux.StatefulLuxLayer
 """
-function stateful(nn::Lux.AbstractLuxLayer, st; fix = true)
+function stateful(nn::Lux.AbstractLuxLayer, st; fix=true)
     return Lux.StatefulLuxLayer{fix}(nn, nothing, st)
 end
 
-function stateful(nn::Lux.AbstractLuxLayer, ps, st; fix = true)
+function stateful(nn::Lux.AbstractLuxLayer, ps, st; fix=true)
     return Lux.StatefulLuxLayer{fix}(nn, ps, st)
 end

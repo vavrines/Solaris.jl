@@ -4,12 +4,11 @@ $(SIGNATURES)
 Flux's @epochs macro
 """
 macro epochs(n, ex)
-    :(@progress for i = 1:$(esc(n))
+    return :(@progress for i in 1:$(esc(n))
         @info "Epoch $i"
         $(esc(ex))
     end)
 end
-
 
 """
 $(SIGNATURES)
@@ -35,7 +34,6 @@ end
 
 vector_nametuple(x::ComponentArray) = NamedTuple(x)
 
-
 """
 $(SIGNATURES)
 
@@ -45,7 +43,6 @@ Transform NamedTuple to ComponentArray
 - ``ps``: NamedTuple of parameters
 """
 nametuple_carray(ps::NamedTuple) = ComponentArray(ps)
-
 
 """
 $(SIGNATURES)
@@ -57,7 +54,6 @@ Transform NamedTuple to vector
 """
 nametuple_vector(ps::NamedTuple) = Vector(nametuple_carray(ps))
 
-
 """
 $(SIGNATURES)
 
@@ -68,7 +64,6 @@ function default_callback(θ, l)
     return false
 end
 
-
 """
 $(SIGNATURES)
 
@@ -78,7 +73,6 @@ function cpu(x...)
     dev = Lux.cpu_device()
     return dev(x...)
 end
-
 
 """
 $(SIGNATURES)

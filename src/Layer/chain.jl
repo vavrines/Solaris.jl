@@ -20,7 +20,7 @@ struct FnChain{T<:Tuple} <: AbstractExplicitChain
 
     function FnChain(xs...)
         layers = getfn.(xs)
-        new{typeof(layers)}(layers)
+        return new{typeof(layers)}(layers)
     end
 end
 

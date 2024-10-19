@@ -25,10 +25,10 @@ function FConvex(
     zin::Integer,
     xin::Integer,
     out::Integer,
-    σ = identity;
-    fw = randn,
-    fb = zeros,
-    precision = Float32,
+    σ=identity;
+    fw=randn,
+    fb=zeros,
+    precision=Float32,
 )
     initial_params() =
         vcat(vec(fw(precision, out, zin)), vec(fw(precision, out, xin)), fb(precision, out))
@@ -42,14 +42,12 @@ function FConvex(
 end
 
 function (f::FConvex)(z, x, p)
-    f.σ.(
-        softplus.(reshape(p[1:(f.out*f.zin)], f.out, f.zin)) * z .+
-        reshape(p[f.out*f.zin+1:(f.out*f.zin+f.out*f.xin)], f.out, f.xin) * x .+
-        p[(f.out*f.zin+f.out*f.xin+1):end],
-    )
+    return f.σ.(softplus.(reshape(p[1:(f.out*f.zin)], f.out, f.zin)) * z .+
+                reshape(p[f.out*f.zin+1:(f.out*f.zin+f.out*f.xin)], f.out, f.xin) * x .+
+                p[(f.out*f.zin+f.out*f.xin+1):end],)
 end
 
-Lux.initialparameters(rng::AbstractRNG, m::FConvex) = (p = m.initial_params(),)
+Lux.initialparameters(rng::AbstractRNG, m::FConvex) = (p=m.initial_params(),)
 Lux.initialstates(rng, x) = NamedTuple()
 
 m = FConvex(4, 4, 4)
@@ -65,12 +63,11 @@ function FICNN(
     din::TI,
     dout::TI,
     layer_sizes::TT,
-    activation = identity::Function;
-    fw = randn::Function,
-    fb = zeros::Function,
-    precision = Float32,
+    activation=identity::Function;
+    fw=randn::Function,
+    fb=zeros::Function,
+    precision=Float32,
 ) where {TI<:Integer,TT<:Union{Tuple,AbstractVector}}
-
     layers = (Lux.Dense(din, layer_sizes[1], activation),)
 
     if length(layer_sizes) > 1
@@ -83,9 +80,9 @@ function FICNN(
                     din,
                     out,
                     activation;
-                    fw = fw,
-                    fb = fb,
-                    precision = precision,
+                    fw=fw,
+                    fb=fb,
+                    precision=precision,
                 ),
             )
             i += 1
@@ -93,19 +90,10 @@ function FICNN(
     end
     layers = (
         layers...,
-        FConvex(
-            layer_sizes[end],
-            din,
-            dout,
-            identity;
-            fw = fw,
-            fb = fb,
-            precision = precision,
-        ),
+        FConvex(layer_sizes[end], din, dout, identity; fw=fw, fb=fb, precision=precision),
     )
 
     return FICNN(layers)
-
 end
 
 nn = FICNN(4, 4, [10, 10, 10])

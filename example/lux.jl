@@ -37,10 +37,10 @@ function LuxLinear(A::AbstractArray, B::AbstractArray)
 end
 
 # `B` is a parameter
-Lux.initialparameters(rng::AbstractRNG, layer::LuxLinear) = (B = layer.init_B(),)
+Lux.initialparameters(rng::AbstractRNG, layer::LuxLinear) = (B=layer.init_B(),)
 
 # `A` is a state
-Lux.initialstates(rng::AbstractRNG, layer::LuxLinear) = (A = layer.init_A(),)
+Lux.initialstates(rng::AbstractRNG, layer::LuxLinear) = (A=layer.init_A(),)
 
 (l::LuxLinear)(x, ps, st) = st.A * ps.B * x, st
 

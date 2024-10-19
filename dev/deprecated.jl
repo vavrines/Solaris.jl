@@ -9,7 +9,7 @@ DiffEqFlux.initial_params(c::FastICNN) = vcat(initial_params.(c.layers)...)
 function (m::FastICNN)(x::AbstractArray, p)
     z = m.layers[1](x, p[1:DiffEqFlux.paramlength(m.layers[1])])
     counter = DiffEqFlux.paramlength(m.layers[1])
-    for i = 2:length(m.layers)
+    for i in 2:length(m.layers)
         z = m.layers[i](z, x, p[counter+1:counter+DiffEqFlux.paramlength(m.layers[i])])
         counter += DiffEqFlux.paramlength(m.layers[i])
     end
@@ -22,7 +22,7 @@ The implementation is lengthy since broadcasting over dictionary and NamedTuple 
 """
 function init_params(c::Lux.Chain)
     ps = init_params(first(c.layers))
-    for i = 2:length(c.layers)
+    for i in 2:length(c.layers)
         ps = [ps; init_params(c.layers[i])]
     end
 

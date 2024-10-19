@@ -52,29 +52,27 @@ struct FastDense{F,F2,C} <: AbstractExplicitLayer
     function FastDense(
         in::Integer,
         out::Integer,
-        σ = identity;
-        bias = true,
-        numcols = 1,
-        precache = false,
-        initW = Flux.glorot_uniform,
-        initb = Flux.zeros32,
+        σ=identity;
+        bias=true,
+        numcols=1,
+        precache=false,
+        initW=Flux.glorot_uniform,
+        initb=Flux.zeros32,
     )
-        temp = (
-            (bias == false) ? vcat(vec(initW(out, in))) :
-            vcat(vec(initW(out, in)), initb(out))
-        )
+        temp = ((bias == false) ? vcat(vec(initW(out, in))) :
+         vcat(vec(initW(out, in)), initb(out)))
         initial_params() = temp
         if precache == true
             cache = (
-                cols = zeros(Int, 1),
-                W = zeros(out, in),
-                y = zeros(out, numcols),
-                yvec = zeros(out),
-                r = zeros(out, numcols),
-                zbar = zeros(out, numcols),
-                Wbar = zeros(out, in),
-                xbar = zeros(in, numcols),
-                pbar = if bias == true
+                cols=zeros(Int, 1),
+                W=zeros(out, in),
+                y=zeros(out, numcols),
+                yvec=zeros(out),
+                r=zeros(out, numcols),
+                zbar=zeros(out, numcols),
+                Wbar=zeros(out, in),
+                xbar=zeros(in, numcols),
+                pbar=if bias == true
                     zeros((out * in) + out)
                 else
                     zeros(out * in)
@@ -84,7 +82,7 @@ struct FastDense{F,F2,C} <: AbstractExplicitLayer
             cache = nothing
         end
         _σ = NNlib.fast_act(σ)
-        new{typeof(_σ),typeof(initial_params),typeof(cache)}(
+        return new{typeof(_σ),typeof(initial_params),typeof(cache)}(
             out,
             in,
             _σ,
@@ -96,11 +94,9 @@ struct FastDense{F,F2,C} <: AbstractExplicitLayer
     end
 end
 
-(f::FastDense)(x::Number, p) = (
-    (f.bias == true) ?
-    (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
-    (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
-)
+(f::FastDense)(x::Number, p) = ((f.bias == true) ?
+ (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
+ (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x)))
 
 @adjoint function (f::FastDense)(x::Number, p)
     if typeof(f.cache) <: Nothing
@@ -146,7 +142,7 @@ end
             pbar = if f.bias == true
                 tmp =
                     typeof(bbar) <: AbstractVector ? vec(vcat(vec(Wbar), bbar)) :
-                    vec(vcat(vec(Wbar), sum(bbar, dims = 2)))
+                    vec(vcat(vec(Wbar), sum(bbar; dims=2)))
                 tmp
             else
                 vec(Wbar)
@@ -182,11 +178,9 @@ end
     end
 end
 
-(f::FastDense)(x::AbstractVector, p) = (
-    (f.bias == true) ?
-    (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
-    (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
-)
+(f::FastDense)(x::AbstractVector, p) = ((f.bias == true) ?
+ (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
+ (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x)))
 
 @adjoint function (f::FastDense)(x::AbstractVector, p)
     if typeof(f.cache) <: Nothing
@@ -232,7 +226,7 @@ end
             pbar = if f.bias == true
                 tmp =
                     typeof(bbar) <: AbstractVector ? vec(vcat(vec(Wbar), bbar)) :
-                    vec(vcat(vec(Wbar), sum(bbar, dims = 2)))
+                    vec(vcat(vec(Wbar), sum(bbar; dims=2)))
                 !(typeof(f.σ) <: typeof(identity)) && ifgpufree(bbar)
                 tmp
             else
@@ -267,11 +261,9 @@ end
     end
 end
 
-(f::FastDense)(x::AbstractMatrix, p) = (
-    (f.bias == true) ?
-    (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
-    (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x))
-)
+(f::FastDense)(x::AbstractMatrix, p) = ((f.bias == true) ?
+ (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x .+ p[(f.out*f.in+1):end])) :
+ (f.σ.(reshape(p[1:(f.out*f.in)], f.out, f.in) * x)))
 
 @adjoint function (f::FastDense)(x::AbstractMatrix, p)
     if typeof(f.cache) <: Nothing
@@ -317,7 +309,7 @@ end
             pbar = if f.bias == true
                 tmp =
                     typeof(bbar) <: AbstractVector ? vec(vcat(vec(Wbar), bbar)) :
-                    vec(vcat(vec(Wbar), sum(bbar, dims = 2)))
+                    vec(vcat(vec(Wbar), sum(bbar; dims=2)))
                 !(typeof(f.σ) <: typeof(identity)) && ifgpufree(bbar)
                 tmp
             else
@@ -344,12 +336,10 @@ end
                 @view(f.cache.zbar[:, 1:f.cache.cols[1]])
             )
             f.cache.pbar .= if f.bias == true
-                vec(
-                    vcat(
-                        vec(f.cache.Wbar),
-                        sum(@view(f.cache.zbar[:, 1:f.cache.cols[1]]), dims = 2),
-                    ),
-                )# bbar = zbar
+                vec(vcat(
+                    vec(f.cache.Wbar),
+                    sum(@view(f.cache.zbar[:, 1:f.cache.cols[1]]); dims=2),
+                ),)# bbar = zbar
             else
                 vec(f.cache.Wbar)
             end

@@ -14,10 +14,10 @@ function Convex(
     z_in::T,
     x_in::T,
     out::T,
-    activation = identity::Function;
-    fw = randn::Function,
-    fb = zeros::Function,
-    precision = Float32,
+    activation=identity::Function;
+    fw=randn::Function,
+    fb=zeros::Function,
+    precision=Float32,
 ) where {T<:Integer}
     return Convex(
         fw(precision, out, z_in),
@@ -50,7 +50,7 @@ end
 Flux.@functor Convex
 
 function Base.show(io::IO, model::Convex{T1,T2,T3}) where {T1,T2,T3}
-    print(
+    return print(
         io,
         "Input convex layer{$T1,$T2,$T3}\n",
         "nonnegative weights for: $(model.W |> size)\n",
@@ -68,12 +68,11 @@ function ICNN(
     din::TI,
     dout::TI,
     layer_sizes::TT,
-    activation = identity::Function;
-    fw = randn::Function,
-    fb = zeros::Function,
-    precision = Float32,
+    activation=identity::Function;
+    fw=randn::Function,
+    fb=zeros::Function,
+    precision=Float32,
 ) where {TI<:Integer,TT<:Union{Tuple,AbstractVector}}
-
     layers = (Flux.Dense(din, layer_sizes[1], activation),)
 
     if length(layer_sizes) > 1
@@ -86,9 +85,9 @@ function ICNN(
                     din,
                     out,
                     activation;
-                    fw = fw,
-                    fb = fb,
-                    precision = precision,
+                    fw=fw,
+                    fb=fb,
+                    precision=precision,
                 ),
             )
             i += 1
@@ -96,24 +95,15 @@ function ICNN(
     end
     layers = (
         layers...,
-        Convex(
-            layer_sizes[end],
-            din,
-            dout,
-            identity;
-            fw = fw,
-            fb = fb,
-            precision = precision,
-        ),
+        Convex(layer_sizes[end], din, dout, identity; fw=fw, fb=fb, precision=precision),
     )
 
     return ICNN(layers)
-
 end
 
 (m::ICNN)(x::AbstractArray) = begin
     z = m.layers[1](x)
-    for i = 2:length(m.layers)
+    for i in 2:length(m.layers)
         z = m.layers[i](z, x)
     end
     return z
@@ -122,13 +112,12 @@ end
 Flux.@functor ICNN
 
 function Base.show(io::IO, model::ICNN{T}) where {T}
-    print(
+    return print(
         io,
         "Input convex neural network{$T}\n",
         "Layers: 1 Dense layer + $(length(model.layers)-1) convex layers\n",
     )
 end
-
 
 """
 $(TYPEDEF)
@@ -147,10 +136,10 @@ function FastConvex(
     zin::Integer,
     xin::Integer,
     out::Integer,
-    σ = identity;
-    fw = randn,
-    fb = zeros,
-    precision = Float32,
+    σ=identity;
+    fw=randn,
+    fb=zeros,
+    precision=Float32,
 )
     initial_params() =
         vcat(vec(fw(precision, out, zin)), vec(fw(precision, out, xin)), fb(precision, out))
@@ -164,11 +153,9 @@ function FastConvex(
 end
 
 function (f::FastConvex)(z, x, p)
-    f.σ.(
-        Flux.softplus.(reshape(p[1:(f.out*f.zin)], f.out, f.zin)) * z .+
-        reshape(p[f.out*f.zin+1:(f.out*f.zin+f.out*f.xin)], f.out, f.xin) * x .+
-        p[(f.out*f.zin+f.out*f.xin+1):end],
-    )
+    return f.σ.(Flux.softplus.(reshape(p[1:(f.out*f.zin)], f.out, f.zin)) * z .+
+                reshape(p[f.out*f.zin+1:(f.out*f.zin+f.out*f.xin)], f.out, f.xin) * x .+
+                p[(f.out*f.zin+f.out*f.xin+1):end],)
 end
 
 """
@@ -189,12 +176,11 @@ function FastICNN(
     din::TI,
     dout::TI,
     layer_sizes::TT,
-    activation = identity::Function;
-    fw = randn::Function,
-    fb = zeros::Function,
-    precision = Float32,
+    activation=identity::Function;
+    fw=randn::Function,
+    fb=zeros::Function,
+    precision=Float32,
 ) where {TI<:Integer,TT<:Union{Tuple,AbstractVector}}
-
     layers = (FnDense(din, layer_sizes[1], activation),)
 
     if length(layer_sizes) > 1
@@ -207,9 +193,9 @@ function FastICNN(
                     din,
                     out,
                     activation;
-                    fw = fw,
-                    fb = fb,
-                    precision = precision,
+                    fw=fw,
+                    fb=fb,
+                    precision=precision,
                 ),
             )
             i += 1
@@ -222,14 +208,13 @@ function FastICNN(
             din,
             dout,
             identity;
-            fw = fw,
-            fb = fb,
-            precision = precision,
+            fw=fw,
+            fb=fb,
+            precision=precision,
         ),
     )
 
     return FastICNN(layers)
-
 end
 
 """
@@ -245,7 +230,7 @@ param_length(c::FastICNN) = length(init_params(c))
 function (m::FastICNN)(x::AbstractArray, p)
     z = m.layers[1](x, p[1:param_length(m.layers[1])])
     counter = param_length(m.layers[1])
-    for i = 2:length(m.layers)
+    for i in 2:length(m.layers)
         z = m.layers[i](z, x, p[counter+1:counter+param_length(m.layers[i])])
         counter += param_length(m.layers[i])
     end

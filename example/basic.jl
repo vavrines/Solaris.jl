@@ -27,7 +27,7 @@ params: a syntax sugar for machine learning with thousands of parameters
 x = [2, 1]
 y = [2, 0]
 gs = gradient(Flux.params(x, y)) do
-    f(x, y)
+    return f(x, y)
 end
 gs[x]
 gs[y]
@@ -42,7 +42,7 @@ b = rand(2)
 predict(x) = W * x .+ b
 function loss(x, y)
     ŷ = predict(x)
-    sum((y .- ŷ) .^ 2)
+    return sum((y .- ŷ) .^ 2)
 end
 
 X, Y = rand(5), rand(2)

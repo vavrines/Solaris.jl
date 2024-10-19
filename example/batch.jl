@@ -18,17 +18,17 @@ cb = function (p, l)
     return l < 1e-4
 end
 
-@time sci_train(loss, p0, Adam(); iters = 10, cb = cb) # ~4.9s
+@time sci_train(loss, p0, Adam(); iters=10, cb=cb) # ~4.9s
 
 function loss1(p)
     pred = nn(gpu(X), p)
     return sum(abs2, pred - gpu(Y))
 end
 
-@time sci_train(loss1, p0, Adam(); iters = 10, cb = cb, device = gpu) # ~0.34s
+@time sci_train(loss1, p0, Adam(); iters=10, cb=cb, device=gpu) # ~0.34s
 
 #--- batch ---#
-train_loader = DataLoader((X, Y), batchsize = 100)
+train_loader = DataLoader((X, Y); batchsize=100)
 
 function loss1(p, data)
     batch_x, batch_y = data
@@ -36,16 +36,7 @@ function loss1(p, data)
     return sum(abs2, pred - batch_y)
 end
 
-@time sci_train(loss1, p0, train_loader, Adam(); iters = 10, cb = cb) # ~0.04s
-@time sci_train(loss1, p0, train_loader, Adam(); iters = 10, cb = cb, epochs = 2) # there is a bug
-@time sci_train(loss1, p0, (X, Y), Adam(); iters = 10, cb = cb, batch = 100)
-@time sci_train(
-    loss1,
-    p0,
-    train_loader,
-    Adam();
-    device = gpu,
-    iters = 10,
-    cb = cb,
-    batch = 100,
-)
+@time sci_train(loss1, p0, train_loader, Adam(); iters=10, cb=cb) # ~0.04s
+@time sci_train(loss1, p0, train_loader, Adam(); iters=10, cb=cb, epochs=2) # there is a bug
+@time sci_train(loss1, p0, (X, Y), Adam(); iters=10, cb=cb, batch=100)
+@time sci_train(loss1, p0, train_loader, Adam(); device=gpu, iters=10, cb=cb, batch=100)
