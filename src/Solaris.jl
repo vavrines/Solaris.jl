@@ -2,6 +2,7 @@ module Solaris
 
 using DocStringExtensions
 using LinearAlgebra
+using NeuralOperators
 using Optimization
 using PyCall
 using Random
@@ -36,6 +37,7 @@ export sci_train, sci_train!
 include("widget.jl")
 include("io.jl")
 include("Layer/layer.jl")
+include("infer.jl")
 include("train.jl")
 
 const tf = PyNULL()
