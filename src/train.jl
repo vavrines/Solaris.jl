@@ -225,11 +225,10 @@ function sci_train!(ann, data::Tuple, opt=Adam(); device=Flux.cpu, epoch=1, batc
     data = DataLoader((X, Y); batchsize=batch, shuffle=true)# |> device
 
     ann = device(ann)
-    ps = Flux.params(ann)
-    loss(x, y) = sum(abs2, ann(x) - y) / L
-    cb = () -> println("loss: $(loss(X, Y))")
+    loss(m, x, y) = sum(abs2, m(x) - y) / L
+    opt_state = Flux.setup(opt, ann)
 
-    @epochs epoch Flux.train!(loss, ps, data, opt, cb=Flux.throttle(cb, 1))
+    @epochs epoch Flux.train!(loss, ann, data, opt_state)
 
     return nothing
 end
@@ -240,14 +239,12 @@ $(SIGNATURES)
 function sci_train!(ann, dl::DataLoader, opt=Adam(); device=Flux.cpu, epoch=1)
     X, Y = dl.data |> device
     L = size(X, 2)
-    #dl = dl |> device
 
     ann = device(ann)
-    ps = Flux.params(ann)
-    loss(x, y) = sum(abs2, ann(x) - y) / L
-    cb = () -> println("loss: $(loss(X, Y))")
+    loss(m, x, y) = sum(abs2, m(x) - y) / L
+    opt_state = Flux.setup(opt, ann)
 
-    @epochs epoch Flux.train!(loss, ps, dl, opt, cb=Flux.throttle(cb, 1))
+    @epochs epoch Flux.train!(loss, ann, dl, opt_state)
 
     return nothing
 end
