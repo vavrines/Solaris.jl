@@ -32,4 +32,6 @@ Shortcut(m, +, tanh)
 # PointNet
 m = SR.PointNet()
 X = rand(Float32, 3, 10, 2)
+Y = rand(Float32, 3, 20, 1)
 m(X)
+m(Y)
