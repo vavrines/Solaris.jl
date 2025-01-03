@@ -28,3 +28,8 @@ m = Flux.Chain(2, 2, tanh)
 
 # Resnet
 Shortcut(m, +, tanh)
+
+# PointNet
+m = SR.PointNet()
+X = rand(Float32, 3, 10, 2)
+m(X)
