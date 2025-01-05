@@ -45,7 +45,7 @@ OptimizationOptimisers = "0.2, 0.3"
 ProgressLogging = "0.1"
 PyCall = "^1"
 Random = "<0.0.1, 1"
-Zygote = "0.6"
+Zygote = "0.6, 0.7"
 julia = "^1"
 
 [extras]
