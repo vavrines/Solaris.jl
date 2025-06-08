@@ -23,9 +23,9 @@ and the trunk input is of shape (2, 10, 1).
 Here we omit this tedious, mind-numbing step as much as possible.
 """
 function infer_deeponet(model, ps, st, u, y)
-    bs = model.branch(u, ps.branch, st.branch)[1]
-    ts = model.trunk(y, ps.trunk, st.trunk)[1]
-    pred = permutedims(bs) * ts
+    bs = model.model.layers.layer_1.layers.branch(u, ps.layer_1.branch, st.layer_1.branch)[1]
+    ts = model.model.layers.layer_1.layers.trunk(y, ps.layer_1.trunk, st.layer_1.trunk)[1]
+    pred = bs * ts
 
     return pred
 end
