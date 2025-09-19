@@ -20,6 +20,13 @@ sci_train(loss, p1)
 loss1(p, (x, y)) = sum(abs2, nn1(x, p) - y)
 sci_train(loss1, p1, (X, Y); cb=default_callback)
 
+dl = Flux.DataLoader((X, Y), batchsize=2, shuffle=true)
+loss1(p, data) = begin
+    x, y = data
+    sum(abs2, nn1(x, p) - y)
+end
+sci_train(loss1, p1, dl; cb=default_callback)
+
 #loss1(p, x, y) = sum(abs2, nn2(x, p) - y)
 #sci_train(loss1, p2, (X, Y), Flux.Adam())
 
