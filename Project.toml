@@ -1,7 +1,7 @@
 name = "Solaris"
 uuid = "c31bc6c7-79d6-424e-a85f-5b42ee086500"
 authors = ["Tianbai Xiao <tianbaixiao@gmail.com>"]
-version = "0.2.29"
+version = "0.2.30"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -39,7 +39,7 @@ LinearAlgebra = "<0.0.1, 1"
 Lux = "^1"
 NNlib = "0.8, 0.9"
 NeuralOperators = "0.5, 0.6"
-Optimization = "^3, ^4"
+Optimization = "^3, ^4, ^5"
 OptimizationOptimJL = "0.3, 0.4"
 OptimizationOptimisers = "0.2, 0.3"
 ProgressLogging = "0.1"
