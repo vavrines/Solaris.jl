@@ -36,10 +36,7 @@ function sci_train(
         return sum(abs2, pred - batch_y) / L
     end
 
-    cb = function (p, l)
-        println("loss: $l")
-        return false
-    end
+    cb = default_callback
 
     return sci_train(
         loss,
@@ -81,10 +78,7 @@ function sci_train(
         return sum(abs2, pred - batch_y) / L
     end
 
-    cb = function (p, l)
-        println("loss: $l")
-        return false
-    end
+    cb = default_callback
 
     return sci_train(
         loss,
