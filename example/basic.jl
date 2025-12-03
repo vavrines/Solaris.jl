@@ -1,7 +1,6 @@
 # Illustrative examples from Flux.jl
 
 using Solaris
-using Solaris.Flux
 
 """
 gradient: scalar -> scalar
@@ -58,7 +57,7 @@ L1 = loss(X, Y)
 """
 affine chain
 """
-
+using Flux
 m = Chain(Dense(28^2, 128, relu), Dense(128, 32, relu), Dense(32, 10))
 
 # regularization

@@ -1,36 +1,25 @@
-using Lux, Optimization, SciMLSensitivity, OptimizationOptimJL, Random
-using ComponentArrays, OrdinaryDiffEq, SciMLSensitivity, Plots
-using Solaris: sci_train
-using Flux: Adam
+using OrdinaryDiffEq, SciMLSensitivity, Solaris, Lux, Plots
 
-rng = Random.default_rng()
-Random.seed!(rng, 0)
-
-u0 = Float32[2.0; 0.0]
+u0 = [2.0; 0.0]
 datasize = 30
-tspan = (0.0f0, 1.5f0)
-tsteps = range(tspan[1], tspan[2]; length=datasize)
+tspan = (0.0, 1.5)
 
 function trueODEfunc(du, u, p, t)
     true_A = [-0.1 2.0; -2.0 -0.1]
     return du .= ((u .^ 3)'true_A)'
 end
+t = range(tspan[1], tspan[2]; length=datasize)
+prob = ODEProblem(trueODEfunc, u0, tspan)
+ode_data = Array(solve(prob, Tsit5(); saveat=t))
 
-prob_trueode = ODEProblem(trueODEfunc, u0, tspan)
-ode_data = Array(solve(prob_trueode, Tsit5(); saveat=tsteps))
-
-nn = Lux.Chain(ActivationFunction(x -> x .^ 3), Lux.Dense(2, 50, tanh), Lux.Dense(50, 2))
-p, st = Lux.setup(rng, nn)
+nn = Lux.Chain(x -> x .^ 3, Lux.Dense(2, 50, tanh), Lux.Dense(50, 2))
+p, st = SR.setup(nn)
 p1 = ComponentArray(p)
-
-#prob_neuralode = NeuralODE(nn, tspan, Tsit5(), saveat = tsteps)
-#predict_neuralode(p) = Array(prob_neuralode(u0, p, st)[1])
 dudt(x, p, t) = nn(x, p, st) |> first
-prob_node = ODEProblem(dudt, u0, tspan, p1)
+prob_node = ODEProblem(dudt, u0, tspan)
 
-function loss(p)
-    pred = solve(prob_node, Midpoint(); u0=u0, p=p, saveat=tsteps) |> Array
-    #pred = predict_neuralode(p)
+function loss(θ)
+    pred = solve(prob_node, Midpoint(); u0=u0, p=θ, saveat=t) |> Array
     loss = sum(abs2, ode_data .- pred)
 
     return loss
@@ -42,13 +31,10 @@ cb = function (p, l)
 end
 
 res = sci_train(loss, p, Adam(0.05); ad=AutoZygote(), callback=cb, maxiters=300)
-res = sci_train(loss, res.u, LBFGS(); ad=AutoZygote(), callback=cb, maxiters=300)
+res = sci_train(loss, res.u, LBFGS(); ad=AutoZygote(), callback=cb, maxiters=100)
 
-#sol = prob_neuralode(u0, res.u, st)
-sol = solve(prob_node, Midpoint(); u0=u0, p=res.u, saveat=tsteps)
+sol = solve(prob_node, Midpoint(); u0=u0, p=res.u, saveat=t)
 nde_data = sol |> Array
-
-nde_data .- ode_data
 
 plot(ode_data[1, :])
 plot!(ode_data[2, :])

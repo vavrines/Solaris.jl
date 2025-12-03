@@ -1,4 +1,4 @@
-using Lux, Random, Solaris, ComponentArrays
+using Lux, Random, Solaris
 
 init_params(Dense(21, 21))
 init_params(Chain(Dense(21, 21), Dense(21, 21)))
@@ -47,9 +47,6 @@ Lux.initialstates(rng::AbstractRNG, layer::LuxLinear) = (A=layer.init_A(),)
 #--- test ---#
 model = LuxLinear(randn(rng, 2, 4), randn(rng, 4, 2))
 x = randn(rng, 2, 1)
-
 ps, st = Lux.setup(rng, model)
-
 model(x, ps, st)
-
 gradient(ps -> sum(first(model(x, ps, st))), ps)

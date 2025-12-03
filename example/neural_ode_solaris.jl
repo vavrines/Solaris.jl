@@ -1,6 +1,4 @@
 using OrdinaryDiffEq, SciMLSensitivity, Solaris, Plots
-using Optimisers: Adam
-using Optimization: AutoZygote
 
 u0 = [2.0; 0.0]
 datasize = 30
@@ -15,9 +13,9 @@ prob = ODEProblem(trueODEfunc, u0, tspan)
 ode_data = Array(solve(prob, Tsit5(); saveat=t))
 
 nn = FnChain(FnDense(2, 50, tanh), FnDense(50, 2))
+p0 = init_params(nn)
 dudt(u, p, t) = nn(u, p)
 prob = ODEProblem(dudt, u0, tspan)
-p0 = init_params(nn)
 
 function loss(θ)
     pred = solve(prob, Tsit5(); u0=u0, p=θ, saveat=t) |> Array
@@ -36,4 +34,4 @@ cb = function (p, l, pred)
     return false
 end
 
-res = sci_train(loss, p0, Adam(0.05); cb=cb, iters=1000, ad=AutoZygote())
+res = sci_train(loss, p0, Adam(0.05); cb=cb, iters=200, ad=AutoZygote())

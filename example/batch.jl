@@ -1,5 +1,5 @@
-using Solaris, CUDA
-using Solaris.Flux: DataLoader, cpu, gpu
+using Solaris
+using Flux: DataLoader, cpu, gpu
 
 nn = FnChain(FnDense(10, 20, tanh), FnDense(20, 10))
 p0 = init_params(nn)
@@ -36,7 +36,7 @@ function loss1(p, data)
     return sum(abs2, pred - batch_y)
 end
 
-@time sci_train(loss1, p0, train_loader, Adam(); iters=10, cb=cb) # ~0.04s
-@time sci_train(loss1, p0, train_loader, Adam(); iters=10, cb=cb, epochs=2) # there is a bug
-@time sci_train(loss1, p0, (X, Y), Adam(); iters=10, cb=cb, batch=100)
-@time sci_train(loss1, p0, train_loader, Adam(); device=gpu, iters=10, cb=cb, batch=100)
+@time sci_train(loss1, p0, train_loader, Adam(); iters=length(train_loader), cb=cb) # ~0.04s
+@time sci_train(loss1, p0, train_loader, Adam(); iters=length(train_loader)*2, cb=cb, epochs=2)
+@time sci_train(loss1, p0, (X, Y), Adam(); iters=10000, cb=cb, batch=100)
+@time sci_train(loss1, p0, train_loader, Adam(); device=gpu, iters=length(train_loader), cb=cb, batch=100)
